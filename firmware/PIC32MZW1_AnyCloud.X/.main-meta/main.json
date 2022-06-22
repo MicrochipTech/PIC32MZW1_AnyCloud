@@ -7,7 +7,7 @@
 		"version": "1.0.0",
 		"displayName": "PIC32MZW1 Curiosity board Any Cloud Demo",
 		"projectName": "PIC32MZW1_AnyCloud",
-		"shortDescription": "This example application is used for connecting to any of the three Clouds- AWS, Azure or test.mosquitto.org or a server without the need for recompiling of the image.",
+		"shortDescription": "This example application is used for connecting to any of the three Clouds- AWS, Azure or test.mosquitto.org or a server.",
 		"ide": {
 			"name": "MPLABX",
 			"semverRange": ">=6.0.0"

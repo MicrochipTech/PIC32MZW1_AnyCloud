@@ -32,7 +32,7 @@ This page describes the UART to Any Cloud Demo for the PIC32MZW1 Curiosity/ WFI3
 
 - USB-UART converter
 
-***Note:*** Please use MPLABX 5.45 or higher with MHC 3.6.2 or higher to edit and regenerate the project 
+***Note:*** Please use MPLABX 6.00 or higher with MHC 3.6.2 or higher to edit and regenerate the project. There are some files which include manual changes and these will need to be retained when regenrating the code. 
 
 ## Hardware Setup
 
@@ -49,7 +49,7 @@ This page describes the UART to Any Cloud Demo for the PIC32MZW1 Curiosity/ WFI3
 ## Demo block diagram
 
 <p align="center">
-<img src="images/demoblock.png" width=720/>
+<img src="images/DemoBlock.png" width=720/>
 </p>
 
 ## Application Overview
@@ -66,7 +66,7 @@ Perform the following steps:
 
 2.  The device enumerates as a mass storage device (**_MSD_**).
 
-3. All the configurations on the device will be done using AT Cmds via the UART. The details regarding the supported AT CMDs is given in [AT Command Reference Document](https://github.com/MicrochipTech/PIC32MZW1_AnyCloud/doc/ATCommandReference.docx)
+3. All the configurations on the device will be done using AT Cmds via the UART. The details regarding the supported AT CMDs can be found in the document ATCommandReference.docx in the "doc" folder
 
 4. Configure the home AP credentials using the AT Cmds
     
