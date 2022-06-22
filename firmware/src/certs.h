@@ -1,0 +1,1 @@
+INSERT_CERT_DER_DATA(app_client_cert_der_mosquitto_org, sizeof_app_client_cert_der_mosquitto_org)
