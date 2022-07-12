@@ -399,9 +399,6 @@
             <logicalFolder name="f4" displayName="cache" projectFiles="true">
               <itemPath>../src/config/default/system/cache/sys_cache.h</itemPath>
             </logicalFolder>
-            <logicalFolder name="f10" displayName="command" projectFiles="true">
-              <itemPath>../src/config/default/system/command/sys_command.h</itemPath>
-            </logicalFolder>
             <logicalFolder name="f12" displayName="console" projectFiles="true">
               <itemPath>../src/config/default/system/console/sys_console.h</itemPath>
             </logicalFolder>
@@ -942,7 +939,6 @@
                 <itemPath>../src/config/default/library/tcpip/src/arp.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/ipv4.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/udp.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/tcpip_commands.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_heap_alloc.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_heap_external.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/dhcp.c</itemPath>
@@ -1027,9 +1023,6 @@
           <logicalFolder name="f5" displayName="system" projectFiles="true">
             <logicalFolder name="f4" displayName="cache" projectFiles="true">
               <itemPath>../src/config/default/system/cache/sys_cache.c</itemPath>
-            </logicalFolder>
-            <logicalFolder name="f9" displayName="command" projectFiles="true">
-              <itemPath>../src/config/default/system/command/src/sys_command.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="console" projectFiles="true">
               <itemPath>../src/config/default/system/console/src/sys_console_uart.h</itemPath>
@@ -1277,7 +1270,6 @@
             </logicalFolder>
             <logicalFolder name="f2" displayName="BASIC_CONFIGURATION" projectFiles="true">
               <itemPath>../src/config/default/default.mhc/System_Configuration/TCP_IP_STACK/BASIC_CONFIGURATION/BASIC_CONFIGURATION.yml</itemPath>
-              <itemPath>../src/config/default/default.mhc/System_Configuration/TCP_IP_STACK/BASIC_CONFIGURATION/tcpipCmd.yml</itemPath>
               <itemPath>../src/config/default/default.mhc/System_Configuration/TCP_IP_STACK/BASIC_CONFIGURATION/tcpip_basic_config.yml</itemPath>
             </logicalFolder>
             <logicalFolder name="f3" displayName="DRIVER_LAYER" projectFiles="true">
@@ -1314,7 +1306,6 @@
           <itemPath>../src/config/default/default.mhc/System_Configuration/lib_pahomqtt.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/lib_wolfssl.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/System_Configuration.yml</itemPath>
-          <itemPath>../src/config/default/default.mhc/System_Configuration/sys_command.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/sys_console.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/sys_debug.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/tcpipNetConfig.yml</itemPath>
@@ -1406,6 +1397,20 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../src/app_mqtt.c" ex="true" overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../src/at_cmds/at_load.c" ex="true" overriding="false">
         <C32>

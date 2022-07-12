@@ -123,7 +123,7 @@ void ATCMD_Init(void)
 
     TP_CommandDecoderInit();
 
-//	ATCMD_PlatformInit();
+	ATCMD_PlatformInit();
 
     ATCMD_PlatformUARTWritePutBuffer("\r\nOK\r\n\0", 6);
     TP_CommandDecoderStartNewLine(consoleCmdBuffer, AT_CMD_CONF_MAX_COMMAND_LENGTH);
@@ -159,7 +159,7 @@ void ATCMD_Update(int termPollRateMs)
             ATCMD_XModemProcess();
         }
 #endif
-#if 0
+#if 1
 		else
         {
             TERM_DECODE_EVENT termEvent;

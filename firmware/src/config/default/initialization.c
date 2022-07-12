@@ -775,14 +775,6 @@ const SYS_MQTT_Config g_sSysMqttConfig =
 
 
 
-const SYS_CMD_INIT sysCmdInit =
-{
-    .moduleInit = {0},
-    .consoleCmdIOParam = SYS_CMD_SINGLE_CHARACTER_READ_CONSOLE_IO_PARAM,
-	.consoleIndex = 0,
-};
-
-
 const SYS_DEBUG_INIT debugInit =
 {
     .moduleInit = {0},
@@ -889,8 +881,6 @@ void SYS_Initialize ( void* data )
 
     SYS_MQTT_Initialize();
 
-    SYS_CMD_Initialize((SYS_MODULE_INIT*)&sysCmdInit);
-
     sysObj.sysDebug = SYS_DEBUG_Initialize(SYS_DEBUG_INDEX_0, (SYS_MODULE_INIT*)&debugInit);
 
 #if 0 //Not Needed
@@ -898,6 +888,7 @@ void SYS_Initialize ( void* data )
     sysObj.syswifi = SYS_WIFI_Initialize(NULL,NULL,NULL);
     SYS_ASSERT(sysObj.syswifi  != SYS_MODULE_OBJ_INVALID, "SYS_WIFI_Initialize Failed" );
 #endif
+
 
     /*** File System Service Initialization Code ***/
     SYS_FS_Initialize( (const void *) sysFSInit );

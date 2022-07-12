@@ -59,7 +59,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 void ATCMD_Init(void);
 
 void APP_Initialize(void) {
-    APP_Commands_Init();
+//    APP_Commands_Init();
 	ATCMD_Init();
 }
 

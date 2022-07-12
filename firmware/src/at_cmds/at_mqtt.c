@@ -1129,7 +1129,16 @@ static ATCMD_STATUS _mqttConnectStart(MqttClient *pMQTTClient, int cleanSession)
     strncpy(cloudConfig.sBrokerConfig.username, (char *)&atCmdAppContext.mqttConf.username[1], SYS_MQTT_USER_NAME_MAX_LEN);
     strncpy(cloudConfig.sBrokerConfig.clientId, (char *)&atCmdAppContext.mqttConf.clientID[1], SYS_MQTT_CLIENT_ID_MAX_LEN);
     cloudConfig.sBrokerConfig.serverPort = atCmdAppContext.mqttConf.port;
-	
+
+	if (atCmdAppContext.mqttConf.tlsConfIdx > 0)
+	{
+		cloudConfig.sBrokerConfig.tlsEnabled = 1;
+	}
+	else
+	{
+		cloudConfig.sBrokerConfig.tlsEnabled = 0;
+	}
+		
 	pMQTTClient->mqtt_handle = SYS_MQTT_Connect(&cloudConfig, _MQTTCallback, NULL);
 
 	mqtt_appData.SysMqttHandle = pMQTTClient->mqtt_handle;
@@ -1165,6 +1174,8 @@ static ATCMD_STATUS _MQTTInit(const AT_CMD_TYPE_DESC* pCmdTypeDesc)
     memset(&atCmdAppContext.mqttConf, 0, sizeof(ATCMD_APP_MQTT_CONF));
 
     atCmdAppContext.mqttConf.port = 8883;
+    
+    atCmdAppContext.mqttConf.tlsConfIdx = 1;
 
     s = atCmdAppContext.sysConf.devName[0];
 

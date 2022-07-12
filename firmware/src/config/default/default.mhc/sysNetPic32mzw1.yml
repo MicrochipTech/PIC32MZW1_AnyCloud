@@ -5,6 +5,13 @@ children:
 - type: Symbols
   children:
   - type: Boolean
+    attributes: {id: SYS_NET_ENABLE_CLICMD}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'false'}
+  - type: Boolean
     attributes: {id: SYS_NET_ENABLE_TLS}
     children:
     - type: Values

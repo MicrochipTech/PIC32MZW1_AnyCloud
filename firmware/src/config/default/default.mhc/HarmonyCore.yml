@@ -133,9 +133,9 @@ children:
         - type: Pairs
           children:
           - type: Pair
-            attributes: {description: 'TRUE', value: '7', key: ENABLE_DRV_COMMON}
+            attributes: {description: 'TRUE', value: '5', key: ENABLE_DRV_COMMON}
           - type: Pair
-            attributes: {description: 'TRUE', value: '8', key: ENABLE_SYS_COMMON}
+            attributes: {description: 'TRUE', value: '6', key: ENABLE_SYS_COMMON}
           - type: Pair
             attributes: {description: 'TRUE', value: '2', key: ENABLE_SYS_MEDIA}
           - type: Pair
@@ -143,7 +143,7 @@ children:
           - type: Pair
             attributes: {description: 'FALSE', value: '0', key: ENABLE_SYS_DMA}
           - type: Pair
-            attributes: {description: 'FALSE', value: '1', key: ENABLE_SYS_RESET}
+            attributes: {description: 'FALSE', value: '0', key: ENABLE_SYS_RESET}
   - type: File
     attributes: {id: CONFIGURATION_H}
     children:

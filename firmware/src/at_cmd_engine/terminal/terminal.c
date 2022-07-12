@@ -68,7 +68,7 @@ static char *pCmdBuffer;
 static size_t cmdBufferLength;
 static size_t cmdBufferMaxLength;
 static size_t cmdBufferInsertPos;
-static bool serialEcho = false;
+static bool serialEcho = true;
 #if AT_CMD_CONF_TP_ESC_TIMEOUT_MS > 0
 static uint32_t escTime;
 #endif
@@ -123,7 +123,7 @@ static void _ReplaceCommandLine(int histIdx)
 void TP_CommandDecoderInit(void)
 {
     pCmdBuffer = NULL;
-    serialEcho = false;
+    serialEcho = true;
 
 #ifdef TP_HISTORY_ENABLED
     memset(&tpLineHistory, 0, sizeof(TP_HISTORY));
@@ -160,12 +160,11 @@ bool TP_EchoGet(void)
  * Reset parser to start of new line
  *****************************************************************************/
 void TP_CommandDecoderStartNewLine(char *pConsoleCmdBuffer, size_t cmdBufferSize)
-{
-	return;
-	
+{	
     TP_ANSIStreamDecoderInit(&ansiStreamState);
 
     pCmdBuffer          = pConsoleCmdBuffer;
+	
     cmdBufferLength     = 0;
     cmdBufferMaxLength  = cmdBufferSize;
     cmdBufferInsertPos  = 0;

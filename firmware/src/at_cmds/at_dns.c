@@ -164,6 +164,8 @@ static ATCMD_STATUS _DNSRESOLVExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, cons
     if (1 == pParamList[0].value.i)
     {
         TCPIP_DNS_RESULT dnsResult;
+                             IP_MULTI_ADDRESS ipAddress;
+                             char ipAddrStr[20];
 
         /* A record lookup */
 
@@ -180,7 +182,7 @@ static ATCMD_STATUS _DNSRESOLVExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, cons
         {
             dnsResult = TCPIP_DNS_Resolve(nameToResolve, TCPIP_DNS_TYPE_A);
 
-            if (dnsResult < 0)
+           if (dnsResult < 0)
             {
                 _DNSResolvResetQuery();
 
@@ -194,7 +196,18 @@ static ATCMD_STATUS _DNSRESOLVExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, cons
             }
             else
             {
-                dnsResolveStartMs = ATCMD_PlatformGetSysTimeMs();
+                                                          dnsResult = TCPIP_DNS_IsResolved(nameToResolve, &ipAddress, TCPIP_DNS_TYPE_A);
+                                                          
+                                                          if (TCPIP_DNS_RES_OK == dnsResult)
+                                                          {
+                                                                        TCPIP_Helper_IPAddressToString(&ipAddress.v4Add, ipAddrStr, sizeof(ipAddrStr));
+                                                                        ATCMD_Printf("+DNSRESOLV:0,\"%s\",\"%s\"\r\n", nameToResolve, ipAddrStr);
+                                                                        _DNSResolvResetQuery();
+                                                          }
+                else
+                                                          {
+                                                                        dnsResolveStartMs = ATCMD_PlatformGetSysTimeMs();
+                }
             }
         }
     }

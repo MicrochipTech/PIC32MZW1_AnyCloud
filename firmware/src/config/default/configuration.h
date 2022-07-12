@@ -140,7 +140,6 @@ extern "C" {
 #define WOLFSSL_TLS13_NO_PEEK_HANDSHAKE_DONE
 
 
-#define SYS_NET_CLICMD_ENABLED
 
 
 
@@ -160,22 +159,11 @@ extern "C" {
 #define SYS_MQTT_INDEX0_SUB_QOS							0
 #define SYS_MQTT_INDEX0_ENTRY_VALID        				false
 
-#define SYS_MQTT_CLICMD_ENABLED
 
 
 
 
 #define SYS_MQTT_CFG_LWT_ENABLE								false
-
-
-#define SYS_CMD_ENABLE
-#define SYS_CMD_DEVICE_MAX_INSTANCES       SYS_CONSOLE_DEVICE_MAX_INSTANCES
-#define SYS_CMD_PRINT_BUFFER_SIZE          1024
-#define SYS_CMD_BUFFER_DMA_READY
-
-/* Command System Service RTOS Configurations*/
-#define SYS_CMD_RTOS_STACK_SIZE                1024
-#define SYS_CMD_RTOS_TASK_PRIORITY             1
 
 
 #define SYS_DEBUG_ENABLE
@@ -401,7 +389,7 @@ extern "C" {
 #define TCPIP_DNS_CLIENT_MAX_HOSTNAME_LEN			64
 #define TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES		4
 #define TCPIP_DNS_CLIENT_DELETE_OLD_ENTRIES			true
-#define TCPIP_DNS_CLIENT_CONSOLE_CMD               	true
+#define TCPIP_DNS_CLIENT_CONSOLE_CMD              	false
 #define TCPIP_DNS_CLIENT_USER_NOTIFICATION   true
 
 
@@ -440,17 +428,12 @@ extern "C" {
 #define TCPIP_DHCP_HOST_NAME_SIZE                   20
 #define TCPIP_DHCP_CLIENT_CONNECT_PORT              68
 #define TCPIP_DHCP_SERVER_LISTEN_PORT               67
-#define TCPIP_DHCP_CLIENT_CONSOLE_CMD               true
+#define TCPIP_DHCP_CLIENT_CONSOLE_CMD              	false
 
 #define TCPIP_DHCP_USE_OPTION_TIME_SERVER           0
 #define TCPIP_DHCP_TIME_SERVER_ADDRESSES            0
 #define TCPIP_DHCP_USE_OPTION_NTP_SERVER            0
 #define TCPIP_DHCP_NTP_SERVER_ADDRESSES             0
-
-
-
-	/*** tcpip_cmd Configuration ***/
-	#define TCPIP_STACK_COMMAND_ENABLE
 
 
 /*** USB Driver Configuration ***/

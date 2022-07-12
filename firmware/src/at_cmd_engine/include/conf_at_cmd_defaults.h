@@ -40,7 +40,7 @@
 
 /* Character to display first in command mode as a user prompt */
 #ifndef AT_CMD_CONF_CMD_MODE_PROMPT_CHAR
-#define AT_CMD_CONF_CMD_MODE_PROMPT_CHAR        '*'
+#define AT_CMD_CONF_CMD_MODE_PROMPT_CHAR        '>'
 #endif
 
 /* Character to display first in binary mode as a user prompt */

@@ -4,6 +4,13 @@ attributes: {id: tcpipDhcp}
 children:
 - type: Symbols
   children:
+  - type: Boolean
+    attributes: {id: TCPIP_DHCP_CLIENT_CONSOLE_CMD}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'false'}
   - type: Integer
     attributes: {id: TCPIP_DHCP_HEAP_SIZE}
     children:

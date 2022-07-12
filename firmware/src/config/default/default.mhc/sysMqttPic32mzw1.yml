@@ -26,6 +26,13 @@ children:
       - type: User
         attributes: {value: 'true'}
   - type: Boolean
+    attributes: {id: SYS_MQTT_ENABLE_CLICMD}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'false'}
+  - type: Boolean
     attributes: {id: SYS_MQTT_ENABLE_SNI}
     children:
     - type: Values

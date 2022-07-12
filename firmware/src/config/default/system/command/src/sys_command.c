@@ -18,7 +18,7 @@
 
 //DOM-IGNORE-BEGIN
 /*******************************************************************************
-* Copyright (C) 2018-2022 Microchip Technology Inc. and its subsidiaries.
+* Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
 *
 * Subject to your compliance with these terms, you may use Microchip software
 * and any derivatives exclusively with Microchip products. It is your
@@ -857,15 +857,12 @@ static void CommandHelp(SYS_CMD_DEVICE_NODE* pCmdIO, int argc, char** argv)
 
 }
 
-bool ATCMD_ParseCommandLine(char *pCmdLine);
-
 static void ParseCmdBuffer(SYS_CMD_IO_DCPT* pCmdIO)
 {
     int  argc = 0;
     char *argv[MAX_CMD_ARGS] = {0};
     char saveCmd[SYS_CMD_MAX_LENGTH + 1];
     const void* cmdIoParam = pCmdIO->devNode.cmdIoParam;
-	int ret = 0;
 
     int            ix, grp_ix;
     const SYS_CMD_DESCRIPTOR* pDcpt;
@@ -878,11 +875,6 @@ static void ParseCmdBuffer(SYS_CMD_IO_DCPT* pCmdIO)
     if(argc > MAX_CMD_ARGS)
     {
         (*pCmdIO->devNode.pCmdApi->print)(cmdIoParam, "\n\r Too many arguments. Maximum args supported: %d!\r\n", MAX_CMD_ARGS);
-		ret = ATCMD_ParseCommandLine(pCmdIO->cmdBuff);
-
-		if (ret != true)
-    	    // command not found
-	        (*pCmdIO->devNode.pCmdApi->msg)(cmdIoParam, " *** Command Processor: unknown command. ***\r\n");
     }
     else if(argc == 0)
     {
@@ -927,11 +919,8 @@ static void ParseCmdBuffer(SYS_CMD_IO_DCPT* pCmdIO)
             }
         }
 
-		ret = ATCMD_ParseCommandLine(pCmdIO->cmdBuff);
-
-		if (ret != true)
-    	    // command not found
-	        (*pCmdIO->devNode.pCmdApi->msg)(cmdIoParam, " *** Command Processor: unknown command. ***\r\n");
+        // command not found
+        (*pCmdIO->devNode.pCmdApi->msg)(cmdIoParam, " *** Command Processor: unknown command. ***\r\n");
     }
 }
 

@@ -173,16 +173,6 @@ void _TCPIP_STACK_Task(  void *pvParameters  )
     }
 }
 
-void _SYS_CMD_Tasks(  void *pvParameters  )
-{
-    while(1)
-    {
-        SYS_CMD_Tasks();
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
-
-
 static void _WDRV_PIC32MZW1_Tasks(  void *pvParameters  )
 {
     while(1)
@@ -237,16 +227,6 @@ void SYS_Tasks ( void )
         SYS_FS_PRIORITY,
         (TaskHandle_t*)NULL
     );
-
-
-    xTaskCreate( _SYS_CMD_Tasks,
-        "SYS_CMD_TASKS",
-        SYS_CMD_RTOS_STACK_SIZE,
-        (void*)NULL,
-        SYS_CMD_RTOS_TASK_PRIORITY,
-        (TaskHandle_t*)NULL
-    );
-
 
 
 
