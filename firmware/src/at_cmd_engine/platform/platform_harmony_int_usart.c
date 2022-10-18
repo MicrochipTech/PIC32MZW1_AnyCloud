@@ -37,6 +37,9 @@
 
 static uint32_t volatile timerMS;
 
+/* Access semaphore for printing OK and asynch events */
+OSAL_SEM_HANDLE_TYPE printEventSemaphore;
+
 static void _timerCallback(uintptr_t context)
 {
     timerMS++;
@@ -138,9 +141,20 @@ bool ATCMD_PlatformUARTWritePutByte(uint8_t b)
 
 bool ATCMD_PlatformUARTWritePutBuffer(const void *pBuf, const size_t numBytes)
 {
+    if (OSAL_SEM_Pend(&printEventSemaphore, OSAL_WAIT_FOREVER) != OSAL_RESULT_TRUE)
+    {
+        return false;
+    }
+
 //	uint8_t b = '\0';
     UART1_Write((uint8_t *)pBuf, numBytes);
 //	UART1_Write(&b, 1);
+    
+
+    if (OSAL_SEM_Post(&printEventSemaphore) != OSAL_RESULT_TRUE)
+    {
+        return false;
+    }
     return true;
 }
 

@@ -507,7 +507,14 @@ static ATCMD_STATUS _WAPInit(const AT_CMD_TYPE_DESC* pCmdTypeDesc)
     memset(&atCmdAppContext.wapConf, 0, sizeof(ATCMD_APP_WAP_CONF));
     memset(&atCmdAppContext.wapConnState, 0, sizeof(ATCMD_APP_WAP_STATE));
 
-    atCmdAppContext.wapConf.channel             = 6;
+    /*
+     Set a default SSID name for SoftAP mode
+     */
+    
+	atCmdAppContext.wapConf.ssid[0] = strlen("DEMO_AP_1");
+	memcpy(&atCmdAppContext.wapConf.ssid[1], "DEMO_AP_1", strlen("DEMO_AP_1"));
+	
+	atCmdAppContext.wapConf.channel             = 6;
     atCmdAppContext.wapConf.dhcpServerEnabled   = true;
     atCmdAppContext.wapConf.ipAddr              = 0x0100A8C0;
     atCmdAppContext.wapConf.netMask             = 0x00FFFFFF;

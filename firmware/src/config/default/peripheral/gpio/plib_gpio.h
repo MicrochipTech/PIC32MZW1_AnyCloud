@@ -71,6 +71,17 @@
 #define SPI1_CS_Get()               ((PORTA >> 1) & 0x1)
 #define SPI1_CS_PIN                  GPIO_PIN_RA1
 
+/*** Macros for CN_INT pin ***/
+#define CN_INT_Set()               (LATASET = (1<<10))
+#define CN_INT_Clear()             (LATACLR = (1<<10))
+#define CN_INT_Toggle()            (LATAINV= (1<<10))
+#define CN_INT_OutputEnable()      (TRISACLR = (1<<10))
+#define CN_INT_InputEnable()       (TRISASET = (1<<10))
+#define CN_INT_Get()               ((PORTA >> 10) & 0x1)
+#define CN_INT_PIN                  GPIO_PIN_RA10
+#define CN_INT_InterruptEnable()   (CNENASET = (1<<10))
+#define CN_INT_InterruptDisable()  (CNENACLR = (1<<10))
+
 
 // *****************************************************************************
 /* GPIO Port
@@ -193,6 +204,7 @@ typedef enum
 
 } GPIO_PIN;
 
+typedef  void (*GPIO_PIN_CALLBACK) ( GPIO_PIN pin, uintptr_t context);
 
 void GPIO_Initialize(void);
 
@@ -217,6 +229,30 @@ void GPIO_PortToggle(GPIO_PORT port, uint32_t mask);
 void GPIO_PortInputEnable(GPIO_PORT port, uint32_t mask);
 
 void GPIO_PortOutputEnable(GPIO_PORT port, uint32_t mask);
+
+void GPIO_PortInterruptEnable(GPIO_PORT port, uint32_t mask);
+
+void GPIO_PortInterruptDisable(GPIO_PORT port, uint32_t mask);
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: Local Data types and Prototypes
+// *****************************************************************************
+// *****************************************************************************
+
+typedef struct {
+
+    /* target pin */
+    GPIO_PIN                 pin;
+
+    /* Callback for event on target pin*/
+    GPIO_PIN_CALLBACK        callback;
+
+    /* Callback Context */
+    uintptr_t               context;
+
+} GPIO_PIN_CALLBACK_OBJ;
+
 
 // *****************************************************************************
 // *****************************************************************************
@@ -263,6 +299,18 @@ static inline void GPIO_PinOutputEnable(GPIO_PIN pin)
 {
     GPIO_PortOutputEnable((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
+
+#define GPIO_PinInterruptEnable(pin)       GPIO_PinIntEnable(pin, GPIO_INTERRUPT_ON_MISMATCH)
+#define GPIO_PinInterruptDisable(pin)      GPIO_PinIntDisable(pin)
+
+void GPIO_PinIntEnable(GPIO_PIN pin, GPIO_INTERRUPT_STYLE style);
+void GPIO_PinIntDisable(GPIO_PIN pin);
+
+bool GPIO_PinInterruptCallbackRegister(
+    GPIO_PIN pin,
+    const   GPIO_PIN_CALLBACK callBack,
+    uintptr_t context
+);
 
 
 // DOM-IGNORE-BEGIN

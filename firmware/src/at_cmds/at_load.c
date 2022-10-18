@@ -30,6 +30,7 @@
 #include "at_cmd_app.h"
 #include "at_cmds/at_cmd_xmodem.h"
 #include "at_cmds/at_cmd_pkcs.h"
+#include "cert_header.h"
 
 /*******************************************************************************
 * Command interface prototypes
@@ -38,9 +39,12 @@ static ATCMD_STATUS _LOADInit(const AT_CMD_TYPE_DESC* pCmdTypeDesc);
 static ATCMD_STATUS _LOADExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int numParams, ATCMD_PARAM *pParamList);
 static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_CMD_TYPE_DESC* pCurrentCmdTypeDesc);
 
+extern bool NET_PRES_LoadVerifyDerBuffer(unsigned char* in, long sz);
+
 /*******************************************************************************
 * Command parameters
 *******************************************************************************/
+#if 0 
 static const ATCMD_HELP_PARAM paramTransferProtocol =
     {"TSFRPROT", "Transfer protocol", ATCMD_PARAM_TYPE_CLASS_INTEGER,
         .numOpts = 4,
@@ -52,11 +56,19 @@ static const ATCMD_HELP_PARAM paramTransferProtocol =
         }
     };
 
+#else
+
+static const ATCMD_HELP_PARAM paramTransferLength =
+    {"LENGTH", "The length of the data to send (1 – 1500 bytes)", ATCMD_PARAM_TYPE_CLASS_INTEGER, 0};
+
 static const ATCMD_HELP_PARAM paramCertname =
     {"CERTNAME", "The name of the certificate", ATCMD_PARAM_TYPE_CLASS_STRING, 0};
+#endif
 
+#if 0
 static const ATCMD_HELP_PARAM paramPrikeyname =
     {"PRIKEYNAME", "The name of the private key", ATCMD_PARAM_TYPE_CLASS_STRING, 0};
+#endif
 
 /*******************************************************************************
 * Command examples
@@ -72,14 +84,14 @@ const AT_CMD_TYPE_DESC atCmdTypeDescLOADCERT =
         .cmdExecute = _LOADExecute,
         .cmdUpdate  = _LOADUpdate,
         .pSummary   = "This command downloads a certificate to the DCE",
-        .appVal     = ATAPP_VAL_LOAD_TYPE_CERT,
+        // .appVal     = ATAPP_VAL_LOAD_TYPE_CERT,
         .numVars    = 1,
         {
             {
                 .numParams   = 2,
                 .pParams     =
                 {
-                    &paramTransferProtocol,
+                    &paramTransferLength, //&paramTransferProtocol,
                     &paramCertname
                 },
                 .numExamples = 0,
@@ -91,6 +103,7 @@ const AT_CMD_TYPE_DESC atCmdTypeDescLOADCERT =
         }
     };
 
+#if 0
 const AT_CMD_TYPE_DESC atCmdTypeDescLOADPRIVKEY =
     {
         .pCmdName   = "+LOADPRIVKEY",
@@ -116,6 +129,7 @@ const AT_CMD_TYPE_DESC atCmdTypeDescLOADPRIVKEY =
             }
         }
     };
+#endif
 
 /*******************************************************************************
 * External references
@@ -140,6 +154,7 @@ typedef struct
 static bool xmTsfrComplete;
 static ATLOAD_TSFR_CTX tsfrCtx;
 
+#if 0 
 /*******************************************************************************
 * Local functions
 *******************************************************************************/
@@ -171,6 +186,19 @@ static void _XModemDataHandler(const uint_fast8_t pktNum, const uint8_t *pBuf, s
         xmTsfrComplete = true;
     }
 }
+#else
+static void _loadCertWriteBinaryDataHandler(const uint8_t *pBuf, size_t numBufBytes)
+{
+    memcpy(&atCmdAppContext.certFile[atCmdAppContext.certFileLength], pBuf,  numBufBytes);
+    atCmdAppContext.certFileLength += numBufBytes;
+    if(atCmdAppContext.certFileLength == tsfrCtx.numBytes)
+    {
+        ATCMD_LeaveBinaryMode();
+        xmTsfrComplete = true;
+    }
+}
+
+#endif
 
 /*******************************************************************************
 * Command init functions
@@ -201,6 +229,7 @@ static ATCMD_STATUS _LOADExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int
         return ATCMD_STATUS_INCORRECT_NUM_PARAMS;
     }
 
+#if 0    
     /* Validate transfer protocol against builtin support */
 
     switch (pParamList[0].value.i)
@@ -255,14 +284,14 @@ static ATCMD_STATUS _LOADExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int
             tsfrCtx.maxNumBytes = AT_CMD_CERT_FILE_MAX_SZ;
             break;
         }
-
+#if 0
         case ATAPP_VAL_LOAD_TYPE_PRIKEY:
         {
             tsfrCtx.pBuf = atCmdAppContext.priKeyFile;
             tsfrCtx.maxNumBytes = AT_CMD_PRIKEY_FILE_MAX_SZ;
             break;
         }
-
+#endif
         default:
         {
             return ATCMD_STATUS_ERROR;
@@ -283,6 +312,14 @@ static ATCMD_STATUS _LOADExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int
     {
         ATCMD_XModemStart(true, &_XModemDataHandler);
     }
+#endif
+
+    atCmdAppContext.certFileLength = 0;
+    tsfrCtx.numBytes = pParamList[0].value.i;
+    memset(atCmdAppContext.certFile, 0,  sizeof(atCmdAppContext.certFile));
+
+    xmTsfrComplete = false;
+    ATCMD_EnterBinaryMode(&_loadCertWriteBinaryDataHandler);
 
     return ATCMD_STATUS_OK;
 }
@@ -317,6 +354,8 @@ static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_C
                 {
                     atCmdAppContext.certFileLength = derFileLength;
 
+                    NET_PRES_LoadVerifyDerBuffer(atCmdAppContext.certFile, derFileLength);
+                
                     ATCMD_Print("0\r\n", 3);
                 }
                 else
@@ -324,9 +363,12 @@ static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_C
                     ATCMD_Print("1\r\n", 3);
                 }
 
+                tsfrCtx.numBytes = 0;
+                
                 break;
             }
 
+#if 0
             case ATAPP_VAL_LOAD_TYPE_PRIKEY:
             {
                 PKCS_PEM_TYPE pemType;
@@ -393,11 +435,19 @@ static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_C
 
                 break;
             }
-
+#endif
+            
             default:
             {
                 return ATCMD_STATUS_ERROR;
             }
+        }
+    }
+    else
+    {
+        if ((false == ATCMD_ModeIsBinary()) && (tsfrCtx.numBytes))
+        {
+            xmTsfrComplete = true;
         }
     }
 

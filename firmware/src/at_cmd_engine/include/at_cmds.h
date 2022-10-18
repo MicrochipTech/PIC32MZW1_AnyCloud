@@ -179,6 +179,7 @@ void ATCMD_PrintIPv4Address(const uint32_t ipv4Addr);
 void ATCMD_PrintStringASCIIEsc(const char *pStr, size_t strLength);
 void ATCMD_PrintStringHex(const uint8_t *pBytes, size_t strLength);
 void ATCMD_PrintStringSafe(const char *pStr, size_t strLength);
+void ATCMD_PrintStringSafeWithDelimiterInfo(const char *pStr, size_t strLength, bool startDelimiter, bool endDelimiter);
 void ATCMD_SetStatusVerbosityLevel(int newLevel);
 void ATCMD_ReportStatus(const ATCMD_STATUS statusCode);
 void ATCMD_ReportAECStatus(const char *pCmdName, const ATCMD_STATUS statusCode);

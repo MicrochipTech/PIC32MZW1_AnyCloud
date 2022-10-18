@@ -94,35 +94,6 @@ extern "C" {
 
 
 
-/* File System Service Configuration */
-
-#define SYS_FS_MEDIA_NUMBER               1
-#define SYS_FS_VOLUME_NUMBER              1
-
-#define SYS_FS_AUTOMOUNT_ENABLE           false
-#define SYS_FS_MAX_FILES                  2
-#define SYS_FS_MAX_FILE_SYSTEM_TYPE       1
-#define SYS_FS_MEDIA_MAX_BLOCK_SIZE       512
-#define SYS_FS_MEDIA_MANAGER_BUFFER_SIZE  2048
-#define SYS_FS_USE_LFN                    1
-#define SYS_FS_FILE_NAME_LEN              255
-#define SYS_FS_CWD_STRING_LEN             1024
-
-/* File System RTOS Configurations*/
-#define SYS_FS_STACK_SIZE                 1024
-#define SYS_FS_PRIORITY                   1
-
-#define SYS_FS_FAT_VERSION                "v0.14a"
-#define SYS_FS_FAT_READONLY               false
-#define SYS_FS_FAT_CODE_PAGE              437
-#define SYS_FS_FAT_MAX_SS                 SYS_FS_MEDIA_MAX_BLOCK_SIZE
-#define SYS_FS_FAT_ALIGNED_BUFFER_LEN     512
-
-
-
-
-
-
 #define SYS_NET_SUPP_INTF_WIFI_ONLY
 #define SYS_NET_SUPP_NUM_OF_SOCKS        		2
 
@@ -185,27 +156,6 @@ extern "C" {
 // Section: Driver Configuration
 // *****************************************************************************
 // *****************************************************************************
-/* Memory Driver Global Configuration Options */
-#define DRV_MEMORY_INSTANCES_NUMBER          1
-
-/* Memory Driver Instance 0 Configuration */
-#define DRV_MEMORY_INDEX_0                   0
-#define DRV_MEMORY_CLIENTS_NUMBER_IDX0       2
-#define DRV_MEMORY_BUFFER_QUEUE_SIZE_IDX0    1
-
-/* Memory Driver Instance 0 RTOS Configurations*/
-#define DRV_MEMORY_STACK_SIZE_IDX0           1024
-#define DRV_MEMORY_PRIORITY_IDX0             1
-#define DRV_MEMORY_RTOS_DELAY_IDX0                         10
-
-/* SST26 Driver Instance Configuration */
-#define DRV_SST26_INDEX                 0
-#define DRV_SST26_CLIENTS_NUMBER        1
-#define DRV_SST26_START_ADDRESS         0x0
-#define DRV_SST26_PAGE_SIZE             256
-#define DRV_SST26_ERASE_BUFFER_SIZE     4096
-#define DRV_SST26_CHIP_SELECT_PIN       SYS_PORT_PIN_RA1
-
 /*** WiFi PIC32MZW1 Driver Configuration ***/
 #define WDRV_PIC32MZW1_DEVICE_USE_SYS_DEBUG
 #define WDRV_PIC32MZW_WPA3_SUPPORT
@@ -262,8 +212,8 @@ extern "C" {
 
 /*** TCP Configuration ***/
 #define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
-#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			512
-#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			512
+#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			1460
+#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			1460
 #define TCPIP_TCP_DYNAMIC_OPTIONS             			true
 #define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
 #define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
@@ -403,23 +353,6 @@ extern "C" {
 #define DRV_BA414E_RTOS_TASK_PRIORITY             1	
 
 
-/* Number of Endpoints used */
-#define DRV_USBFS_ENDPOINTS_NUMBER                        3
-
-/* The USB Device Layer will not initialize the USB Driver */
-#define USB_DEVICE_DRIVER_INITIALIZE_EXPLICIT
-
-/* Maximum device layer instances */
-#define USB_DEVICE_INSTANCES_NUMBER                         1
-
-/* EP0 size in bytes */
-#define USB_DEVICE_EP0_BUFFER_SIZE                          64
-
-
-
-
-
-
 
 /*** DHCP Configuration ***/
 #define TCPIP_STACK_USE_DHCP_CLIENT
@@ -435,26 +368,6 @@ extern "C" {
 #define TCPIP_DHCP_USE_OPTION_NTP_SERVER            0
 #define TCPIP_DHCP_NTP_SERVER_ADDRESSES             0
 
-
-/*** USB Driver Configuration ***/
-
-/* Maximum USB driver instances */
-#define DRV_USBFS_INSTANCES_NUMBER                        1
-
-/* Interrupt mode enabled */
-#define DRV_USBFS_INTERRUPT_MODE                          true
-
-
-/* Enables Device Support */
-#define DRV_USBFS_DEVICE_SUPPORT                          true
-	
-/* Disable Host Support */
-#define DRV_USBFS_HOST_SUPPORT                            false
-
-
-
-/* Alignment for buffers that are submitted to USB Driver*/ 
-#define USB_ALIGN  CACHE_ALIGN
 
 
 /*** DHCP Server Configuration ***/
@@ -625,17 +538,6 @@ extern "C" {
 #define HAVE_PK_CALLBACKS
 #define WOLFSSL_ATECC508A_NOIDLE
 // ---------- FUNCTIONAL CONFIGURATION END ----------
-
-/* Maximum instances of MSD function driver */
-#define USB_DEVICE_MSD_INSTANCES_NUMBER     1 
-
-#define USB_DEVICE_MSD_NUM_SECTOR_BUFFERS 1
-
-
-/* Number of Logical Units */
-#define USB_DEVICE_MSD_LUNS_NUMBER      1
-
-
 
 /* WIFI System Service Configuration Options */
 #define SYS_WIFI_DEVMODE        			SYS_WIFI_STA

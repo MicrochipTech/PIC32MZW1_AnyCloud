@@ -73,6 +73,8 @@ void ATCMD_LeaveBinaryMode(void)
     pfBinaryDataHandler = NULL;
 }
 
+extern uint32_t g_binModeNumBytes;
+
 /*****************************************************************************
  * Return if application is currently in binary mode
  *****************************************************************************/
@@ -92,6 +94,53 @@ bool ATCMD_BinaryProcess(void)
     curTimeMs = ATCMD_PlatformGetSysTimeMs();
 
     numBytes = ATCMD_PlatformUARTReadGetCount();
+
+    while (g_binModeNumBytes)
+    {
+        /* Process data in blocks, ignore escape sequence processing
+            as there is obvious data following any sequence which is present. */
+
+        static uint8_t binBuffer[AT_CMD_CONF_BIN_MAX_BUFFER_SIZE];
+        static size_t numBufBytes = 0;
+        uint32_t numBufBytesRead = 0;
+
+        if(numBufBytes == 0)
+        {
+            memset(binBuffer, 0, AT_CMD_CONF_BIN_MAX_BUFFER_SIZE);
+        }
+        
+        /* Read data from UART buffer and pass to binary data handler. */
+
+        numBufBytesRead = ATCMD_PlatformUARTReadGetBuffer(&binBuffer[numBufBytes], g_binModeNumBytes);
+        
+        if((numBufBytesRead == 0) && (numBufBytes != g_binModeNumBytes))
+        {
+            /* More Data needed from user before calling callback */
+            
+            return true;
+        }
+        
+        numBufBytes = numBufBytes + numBufBytesRead;
+            
+        if ((NULL != pfBinaryDataHandler) && (numBufBytes == g_binModeNumBytes))
+        {
+            /* All bytes received, calling callback and exiting binary mode */
+            
+            pfBinaryDataHandler(binBuffer, g_binModeNumBytes);
+            
+            g_binModeNumBytes = 0;
+            
+            numBufBytes = 0;
+            
+            ATCMD_PlatformUARTWritePutBuffer("\r\n", 2);
+
+            ATCMD_LeaveBinaryMode();
+
+            ATCMD_ReportStatus(ATCMD_STATUS_OK);
+
+            return true;
+        }
+    }
 
 #if AT_CMD_CONF_BIN_FAST_BUFFER_SIZE > 0
     if (numBytes > AT_CMD_CONF_BIN_ESCAPE_SEQ_LENGTH)
@@ -127,7 +176,7 @@ bool ATCMD_BinaryProcess(void)
         numBytes += AT_CMD_CONF_BIN_ESCAPE_SEQ_LENGTH;
     }
 #endif
-
+    
     while (numBytes--)
     {
         uint8_t newByte;

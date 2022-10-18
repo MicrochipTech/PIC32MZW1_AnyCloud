@@ -67,6 +67,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define AT_CMD_WAP_DFLT_IPV4_GATEWAY            ((192 << 24) | (168 << 16) | (0 << 8) | (1))
 #define AT_CMD_WAP_DFLT_IPV4_DNS_SRV1           ((192 << 24) | (168 << 16) | (0 << 8) | (1))
 #define AT_CMD_SOCK_MAX_NUM                     20 /* TODO */
+#define AT_CMD_SOCK_MAX_CLIENTS                 5
 #define AT_CMD_SOCK_RX_BUFFER_SZ                2048
 #define AT_CMD_CERT_FILE_MAX_SZ                 1500
 #define AT_CMD_PRIKEY_FILE_MAX_SZ               2000
@@ -283,6 +284,7 @@ typedef struct
 {
     int         mode;
     uint8_t     pin[8+1];
+	uint32_t    provPort;
 } ATCMD_APP_WPROV_CONF;
 
 typedef struct
@@ -393,6 +395,7 @@ typedef struct
     ATCMD_APP_MQTT_PROP_TX_CONF mqttPropTxConf;
     ATCMD_APP_MQTT_PROP_RX_CONF mqttPropRxConf;
 #endif
+	uint32_t					respond_to_app;
 } ATCMD_APP_CONTEXT;
 
 const char* ATCMD_APPExecuteGMR(void);

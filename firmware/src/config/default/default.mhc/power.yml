@@ -1,0 +1,22 @@
+format_version: v1.0
+type: UniqueComponent
+attributes: {id: power}
+children:
+- type: Symbols
+  children:
+  - type: Hex
+    attributes: {id: DSCON_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: power, value: '8192'}
+  - type: Boolean
+    attributes: {id: DS_EXTENDED_REG_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'true'}
+- type: ElementPosition
+  attributes: {x: '52', y: '117', id: power}

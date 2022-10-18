@@ -836,7 +836,7 @@ SYS_MODULE_OBJ SYS_NET_Open(SYS_NET_Config *cfg, SYS_NET_CALLBACK net_cb, void *
     /* Check if the NET IP Stack is UP */
     if (SYS_NET_Ll_Status(hdl) == false)
     {
-        SYS_NETDEBUG_ERR_PRINT(g_NetAppDbgHdl, NET_CFG, "TCPIP Stack Not UP\r\n");
+        SYS_NETDEBUG_DBG_PRINT(g_NetAppDbgHdl, NET_CFG, "TCPIP Stack Not UP yet\r\n");
 
         SYS_NET_SetInstStatus(hdl, SYS_NET_STATUS_LOWER_LAYER_DOWN);
 
@@ -1498,7 +1498,7 @@ static void SYS_NET_Server_Task(SYS_NET_Handle *hdl)
             /* We got a connection */
             SYS_NET_SetInstStatus(hdl, SYS_NET_STATUS_CONNECTED);
 
-            SYS_NETDEBUG_ERR_PRINT(g_NetAppDbgHdl, NET_CFG, "Received a connection\r\n");
+            SYS_NETDEBUG_DBG_PRINT(g_NetAppDbgHdl, NET_CFG, "Received a connection\r\n");
 
             SYS_NET_GiveSemaphore(hdl);
 

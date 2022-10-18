@@ -56,6 +56,8 @@ AT_CMD_PRIKEY_ENTRY priKeysTable[] = {
     {.pFN = NULL}
 };
 
+extern OSAL_SEM_HANDLE_TYPE printEventSemaphore;
+
 extern const AT_CMD_TYPE_DESC atCmdTypeDescRST;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescOTAFW;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescSWFW;
@@ -66,6 +68,8 @@ extern const AT_CMD_TYPE_DESC atCmdTypeDescWSTAC;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescWSTA;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescWAPC;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescWAP;
+extern const AT_CMD_TYPE_DESC atCmdTypeDescWPROVC;
+extern const AT_CMD_TYPE_DESC atCmdTypeDescWPROV;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescSOCKO;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescSOCKBL;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescSOCKBR;
@@ -96,6 +100,9 @@ extern const AT_CMD_TYPE_DESC atCmdTypeDescMQTTPROPTXS;
 #endif
 extern const AT_CMD_TYPE_DESC atCmdTypeDescTLSC;
 extern const AT_CMD_TYPE_DESC atCmdTypeDescINFO;
+extern const AT_CMD_TYPE_DESC atCmdTypeDescLOADCERT;
+extern const AT_CMD_TYPE_DESC atCmdTypeDescREADCERT;
+extern const AT_CMD_TYPE_DESC atCmdTypeDescLowPower;
 
 const AT_CMD_TYPE_DESC* atCmdTypeDescTable[] =
 {
@@ -107,36 +114,35 @@ const AT_CMD_TYPE_DESC* atCmdTypeDescTable[] =
     &atCmdTypeDescWSCNP,
     &atCmdTypeDescWSTAC,
     &atCmdTypeDescWSTA,
-	&atCmdTypeDescWAPC,
-	&atCmdTypeDescWAP,
-	&atCmdTypeDescSOCKO,
-	&atCmdTypeDescSOCKBL,
-	&atCmdTypeDescSOCKBR,
-	&atCmdTypeDescSOCKBM,
-	&atCmdTypeDescSOCKTLS,
-	&atCmdTypeDescSOCKWR,
-	&atCmdTypeDescSOCKWRTO,
-	&atCmdTypeDescSOCKRD,
-	&atCmdTypeDescSOCKCL,
-	&atCmdTypeDescSOCKLST,
-#if 1    
-        &atCmdTypeDescDNSRESOLV,
-#endif    
+    &atCmdTypeDescWAPC,
+    &atCmdTypeDescWAP,
+	&atCmdTypeDescWPROVC,
+	&atCmdTypeDescWPROV,
+    &atCmdTypeDescSOCKO,
+    &atCmdTypeDescSOCKBL,
+    &atCmdTypeDescSOCKBR,
+    &atCmdTypeDescSOCKBM,
+    &atCmdTypeDescSOCKTLS,
+    &atCmdTypeDescSOCKWR,
+    &atCmdTypeDescSOCKWRTO,
+    &atCmdTypeDescSOCKRD,
+    &atCmdTypeDescSOCKCL,
+    &atCmdTypeDescSOCKLST,
+    &atCmdTypeDescDNSRESOLV,
     &atCmdTypeDescTIME,
     &atCmdTypeDescCFG,
-#if 1    
     &atCmdTypeDescPING,
-#endif    
-	&atCmdTypeDescMQTTC,
+    &atCmdTypeDescMQTTC,
     &atCmdTypeDescMQTTCONN,
     &atCmdTypeDescMQTTSUB,
     &atCmdTypeDescMQTTUNSUB,
-	&atCmdTypeDescMQTTPUB,
-	&atCmdTypeDescMQTTDISCONN,
-#if 1
-	&atCmdTypeDescTLSC,
-#endif	
+    &atCmdTypeDescMQTTPUB,
+    &atCmdTypeDescMQTTDISCONN,
+    &atCmdTypeDescTLSC,
     &atCmdTypeDescINFO,
+    &atCmdTypeDescLOADCERT,
+    &atCmdTypeDescREADCERT,
+    &atCmdTypeDescLowPower,
     NULL,
 };
 
@@ -309,6 +315,7 @@ void ATCMD_APPInit(void)
     }
 
     TCPIP_STACK_NetMulticastSet(atCmdAppContext.netHandle);
+    OSAL_SEM_Create(&printEventSemaphore, OSAL_SEM_TYPE_BINARY, 1, 1);
 }
 
 void ATCMD_APPUpdate(void)

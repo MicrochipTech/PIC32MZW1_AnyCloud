@@ -407,6 +407,7 @@ const AT_CMD_TYPE_DESC atCmdTypeDescSOCKLST =
 *******************************************************************************/
 extern ATCMD_APP_CONTEXT atCmdAppContext;
 extern int CheckAvailableSize(WOLFSSL *ssl, int size);
+uint32_t g_binModeNumBytes = 0;
 
 /*******************************************************************************
 * Local defines and types
@@ -448,6 +449,7 @@ typedef struct _ATCMD_SOCK_STATE
     uint16_t                    remotePort;
     uint16_t                    pendingDataLength;
     uint32_t                    lastTimeMs;
+    int                       childTransHandle[AT_CMD_SOCK_MAX_CLIENTS];
 } ATCMD_SOCK_STATE;
 
 typedef struct
@@ -594,6 +596,23 @@ static ATCMD_SOCK_STATE* _findSocketByHandle(int handle)
     return NULL;
 }
 
+static ATCMD_SOCK_STATE* _findSocketByTransHandle(int transHandle)
+{
+    int i;
+
+    for (i=0; i<AT_CMD_SOCK_MAX_NUM; i++)
+    {
+        if (transHandle == socketState[i].transHandle)
+        {
+            /* Asked for a specific handle and found it */
+
+            return &socketState[i];
+        }
+    }
+
+    return NULL;
+}
+
 static ATCMD_SOCK_STATE* _findUDPSocketByTransHandle(UDP_SOCKET transHandle)
 {
     int i;
@@ -641,60 +660,35 @@ static void _closeSocket(ATCMD_SOCK_STATE *pSockState)
             }
 
             pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
-            TCPIP_TCP_Close(pSockState->transHandle);
         }
 
-        pSockState->transHandle    = -1;
-        pSockState->inUse          = false;
         pSockState->remoteIPv4Addr.Val = 0;
         pSockState->remotePort         = 0;
     }
     else
     {
-        if (-1 != pSockState->transHandle)
+        if (ATCMD_SOCK_PROTO_UDP == pSockState->protocol)
         {
-            TCPIP_TCP_SignalHandlerDeregister(pSockState->transHandle, pSockState->sigHandler);
+            TCPIP_UDP_SignalHandlerDeregister(pSockState->transHandle, pSockState->sigHandler);
 
-            if (ATCMD_SOCK_PROTO_UDP == pSockState->protocol)
-            {
-                TCPIP_UDP_Close(pSockState->transHandle);
-            }
-            else
-            {
-                if (NULL != pSockState->pWolfSSLSession)
-                {
-                    ATCMD_TLS_FreeSession(pSockState->tlsConfIdx, pSockState->pWolfSSLSession);
-                }
-
-                pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
-
-                TCPIP_TCP_Close(pSockState->transHandle);
-            }
-
-            pSockState->transHandle    = -1;
-            pSockState->inUse          = false;
+            TCPIP_UDP_Close(pSockState->transHandle);
         }
         else
         {
-            int i;
+            TCPIP_TCP_SignalHandlerDeregister(pSockState->transHandle, pSockState->sigHandler);
 
-            /* Socket being deleted is a server listening socket.
-               Check all sockets which are connected with this server socket. */
-            for (i=0; i<AT_CMD_SOCK_MAX_NUM; i++)
+            if (NULL != pSockState->pWolfSSLSession)
             {
-                if (pSockState == socketState[i].pParent)
-                {
-                    /* Detach the socket from the parent server listening socket. */
-                    socketState[i].pParent = NULL;
-
-                    if (0 == socketState[i].remotePort)
-                    {
-                        /* If the socket is not in use, delete it as normal. */
-                        _closeSocket(&socketState[i]);
-                    }
-                }
+                ATCMD_TLS_FreeSession(pSockState->tlsConfIdx, pSockState->pWolfSSLSession);
             }
+
+            pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
+
+            TCPIP_TCP_Close(pSockState->transHandle);
         }
+
+        pSockState->transHandle    = -1;
+        pSockState->inUse          = false;
     }
 }
 
@@ -834,6 +828,13 @@ static void _tcpSocketSignalHandler(TCP_SOCKET hTCP, TCPIP_NET_HANDLE hNet, TCPI
 
         pSockState->remoteIPv4Addr.Val = 0;
         pSockState->remotePort         = 0;
+
+        if(sigType & TCPIP_TCP_SIGNAL_RX_RST)
+        {
+            pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
+            pSockState->transHandle    = -1;
+            pSockState->inUse          = false;
+        }
     }
 }
 
@@ -986,7 +987,7 @@ static ATCMD_STATUS _SOCKBLExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
 
         pSockState->localPort  = pParamList[1].value.i;
 
-        for (i=0; i<5; i++)
+        for (i=0; i<AT_CMD_SOCK_MAX_CLIENTS; i++)
         {
             ATCMD_SOCK_STATE *pSrvSockState;
 
@@ -1002,7 +1003,9 @@ static ATCMD_STATUS _SOCKBLExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
 
                     return ATCMD_APP_STATUS_SOCKET_BIND_FAILED;
                 }
-
+                
+                pSockState->childTransHandle[i] = pSrvSockState->transHandle;
+                
                 pSrvSockState->sigHandler       = TCPIP_TCP_SignalHandlerRegister(pSrvSockState->transHandle, 0xffff /*TCPIP_TCP_SIGNAL_ESTABLISHED | TCPIP_TCP_SIGNAL_RX_RST | TCPIP_TCP_SIGNAL_RX_DATA*/, _tcpSocketSignalHandler, pSrvSockState);
 
                 pSrvSockState->localPort        = pSockState->localPort;
@@ -1255,11 +1258,9 @@ static ATCMD_STATUS _SOCKWRExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
             return ATCMD_STATUS_INVALID_PARAMETER;
         }
 
-        /* Ensure length parameter is zero if data parameter is missing */
-
         if (0 != pParamList[1].value.i)
         {
-            return ATCMD_STATUS_INVALID_PARAMETER;
+            g_binModeNumBytes = pParamList[1].value.i;
         }
     }
     else
@@ -1377,11 +1378,9 @@ static ATCMD_STATUS _SOCKWRTOExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const
             return ATCMD_STATUS_INVALID_PARAMETER;
         }
 
-        /* Ensure length parameter is zero if data parameter is missing */
-
         if (0 != pParamList[3].value.i)
         {
-            return ATCMD_STATUS_INVALID_PARAMETER;
+            g_binModeNumBytes = pParamList[3].value.i;
         }
     }
     else
@@ -1409,6 +1408,8 @@ static ATCMD_STATUS _SOCKWRTOExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const
         {
             IPV4_ADDR remoteAddr;
             TCPIP_Helper_StringToIPAddress((char*)pParamList[1].value.p, &remoteAddr);
+            TCPIP_UDP_DestinationIPAddressSet(pSockState->transHandle, IP_ADDRESS_TYPE_IPV4, (IP_MULTI_ADDRESS*)&remoteAddr);
+            TCPIP_UDP_DestinationPortSet(pSockState->transHandle, pParamList[2].value.i);
             pSockState->remoteIPv4Addr.Val = remoteAddr.Val;
             pSockState->remotePort         = pParamList[2].value.i;
         }
@@ -1552,12 +1553,41 @@ static ATCMD_STATUS _SOCKCLExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
         return ATCMD_APP_STATUS_SOCKET_ID_NOT_FOUND;
     }
 
-    _closeSocket(pSockState);
-
-    if (true == pSockState->inUse)
+    if(pSockState->transHandle == -1)
     {
-        return ATCMD_APP_STATUS_SOCKET_CLOSE_FAILED;
+        int i = 0; 
+        ATCMD_SOCK_STATE *pTmpSockState = NULL;
+        
+        for(i = 0; i < AT_CMD_SOCK_MAX_CLIENTS; i++)
+        {
+            pTmpSockState = _findSocketByTransHandle(pSockState->childTransHandle[i]);
+
+            if (NULL == pTmpSockState)
+            {
+                continue;
+            }
+
+            if (ATCMD_SOCK_PROTO_UDP == pTmpSockState->protocol)
+            {
+                continue;
+            }
+
+            if (NULL != pTmpSockState->pWolfSSLSession)
+            {
+                ATCMD_TLS_FreeSession(pTmpSockState->tlsConfIdx, pTmpSockState->pWolfSSLSession);
+            }
+
+            pTmpSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
+            TCPIP_TCP_Close(pTmpSockState->transHandle);
+
+            pTmpSockState->transHandle    = -1;
+            pTmpSockState->inUse          = false;
+            pTmpSockState->remoteIPv4Addr.Val = 0;
+            pTmpSockState->remotePort         = 0;
+        }
     }
+    
+    _closeSocket(pSockState);
 
     return ATCMD_STATUS_OK;
 }
@@ -1584,14 +1614,19 @@ static ATCMD_STATUS _SOCKLSTExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const 
         {
             if ((0 == numParams) || (socketState[i].handle == pParamList[0].value.i))
             {
-                ATCMD_Printf("+SOCKLST:%d,%d,", socketState[i].handle, socketState[i].protocol);
-
                 if (0 != socketState[i].remoteIPv4Addr.Val)
                 {
+                    ATCMD_Printf("+SOCKLST:%d,%d,", socketState[i].handle, socketState[i].protocol);
+
                     ATCMD_PrintIPv4Address(socketState[i].remoteIPv4Addr.Val);
                 }
                 else
                 {
+                    if(socketState[i].pParent)
+                        continue;
+                    
+                    ATCMD_Printf("+SOCKLST:%d,%d,", socketState[i].handle, socketState[i].protocol);
+
                     ATCMD_Print("\"\"", 2);
                 }
 

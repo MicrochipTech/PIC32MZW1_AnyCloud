@@ -44,6 +44,7 @@
 #include "plib_evic.h"
 
 
+EXT_INT_PIN_CALLBACK_OBJ extInt0CbObj;
 // *****************************************************************************
 // *****************************************************************************
 // Section: IRQ Implementation
@@ -56,24 +57,24 @@ void EVIC_Initialize( void )
 
     /* Set up priority and subpriority of enabled interrupts */
     IPC0SET = 0x4 | 0x0;  /* CORE_TIMER:  Priority 1 / Subpriority 0 */
+    IPC0SET = 0x8000000 | 0x0;  /* EXTERNAL_0:  Priority 2 / Subpriority 0 */
     IPC2SET = 0x400 | 0x0;  /* TIMER_2:  Priority 1 / Subpriority 0 */
     IPC3SET = 0x40000 | 0x0;  /* TIMER_3:  Priority 1 / Subpriority 0 */
     IPC8SET = 0x400 | 0x0;  /* RTCC:  Priority 1 / Subpriority 0 */
-    IPC8SET = 0x40000 | 0x0;  /* USB:  Priority 1 / Subpriority 0 */
-    IPC9SET = 0x4 | 0x0;  /* SPI1_RX:  Priority 1 / Subpriority 0 */
-    IPC9SET = 0x400 | 0x0;  /* SPI1_TX:  Priority 1 / Subpriority 0 */
     IPC9SET = 0x40000 | 0x0;  /* UART1_FAULT:  Priority 1 / Subpriority 0 */
     IPC9SET = 0x4000000 | 0x0;  /* UART1_RX:  Priority 1 / Subpriority 0 */
     IPC10SET = 0x4 | 0x0;  /* UART1_TX:  Priority 1 / Subpriority 0 */
+    IPC11SET = 0x4 | 0x0;  /* CHANGE_NOTICE_A:  Priority 1 / Subpriority 0 */
     IPC14SET = 0x4000000 | 0x0;  /* I2C2_BUS:  Priority 1 / Subpriority 0 */
     IPC15SET = 0x400 | 0x0;  /* I2C2_MASTER:  Priority 1 / Subpriority 0 */
     IPC20SET = 0x4000000 | 0x0;  /* RFSMC:  Priority 1 / Subpriority 0 */
     IPC21SET = 0x4 | 0x0;  /* RFMAC:  Priority 1 / Subpriority 0 */
     IPC21SET = 0x40000 | 0x0;  /* RFTM0:  Priority 1 / Subpriority 0 */
-    IPC30SET = 0x400 | 0x0;  /* ADC_DATA15:  Priority 1 / Subpriority 0 */
     IPC41SET = 0x40000 | 0x0;  /* CRYPTO1:  Priority 1 / Subpriority 0 */
     IPC41SET = 0x4000000 | 0x0;  /* CRYPTO1_FAULT:  Priority 1 / Subpriority 0 */
 
+	/* Initialize External interrupt 0 callback object */
+	extInt0CbObj.callback = NULL;
 
 }
 
@@ -145,6 +146,58 @@ void EVIC_INT_Restore( bool state )
     {
         /* restore the state of CP0 Status register before the disable occurred */
         __builtin_enable_interrupts();
+    }
+}
+
+void EVIC_ExternalInterruptEnable( EXTERNAL_INT_PIN extIntPin )
+{
+    IEC0SET = extIntPin;
+}
+
+void EVIC_ExternalInterruptDisable( EXTERNAL_INT_PIN extIntPin )
+{
+    IEC0CLR = extIntPin;
+}
+
+bool EVIC_ExternalInterruptCallbackRegister(
+    EXTERNAL_INT_PIN extIntPin,
+    const EXTERNAL_INT_PIN_CALLBACK callback,
+    uintptr_t context
+)
+{
+    bool status = true;
+    switch  (extIntPin)
+        {
+        case EXTERNAL_INT_0:
+            extInt0CbObj.callback = callback;
+            extInt0CbObj.context  = context;
+            break;
+        default:
+            status = false;
+            break;
+        }
+
+    return status;
+}
+
+
+// *****************************************************************************
+/* Function:
+    void EXTERNAL_0_InterruptHandler(void)
+
+  Summary:
+    Interrupt Handler for External Interrupt pin 0.
+
+  Remarks:
+	It is an internal function called from ISR, user should not call it directly.
+*/
+void EXTERNAL_0_InterruptHandler(void)
+{
+    IFS0CLR = _IFS0_INT0IF_MASK;
+
+    if(extInt0CbObj.callback != NULL)
+    {
+        extInt0CbObj.callback (EXTERNAL_INT_0, extInt0CbObj.context);
     }
 }
 

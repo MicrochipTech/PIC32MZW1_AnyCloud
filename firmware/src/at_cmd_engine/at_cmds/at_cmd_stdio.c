@@ -95,6 +95,10 @@ void ATCMD_LeaveAECMode(void)
     isAECOutput = false;
 }
 
+extern ATCMD_APP_CONTEXT atCmdAppContext;
+extern int8_t response_buffer[1024];
+extern int32_t response_buffer_length;
+
 /*****************************************************************************
  * Print to output channel
  *****************************************************************************/
@@ -114,6 +118,19 @@ void ATCMD_Print(const char *pMsg, size_t msgLength)
     }
 
     ATCMD_PlatformUARTWritePutBuffer(pMsg, msgLength);
+
+    if(atCmdAppContext.respond_to_app == 1)
+    {
+        /*
+         * Do not write into the response buffer if response_buffer_length
+         * is bigger than response buffer.
+         */
+        if(response_buffer_length + msgLength <= sizeof(response_buffer))
+        {
+            memcpy(response_buffer + response_buffer_length, pMsg, msgLength);
+            response_buffer_length += msgLength;
+        }
+    }
 
     if (true == isAECOutput)
     {
@@ -273,6 +290,7 @@ void ATCMD_PrintStringASCIIEsc(const char *pStr, size_t strLength)
     ATCMD_Print(tmpBuf, len);
 }
 
+
 /*****************************************************************************
  * Print to output channel a string as a series of hex bytes
  *****************************************************************************/
@@ -351,6 +369,162 @@ void ATCMD_PrintStringSafe(const char *pStr, size_t strLength)
     ATCMD_Print(pStr, strLength);
     ATCMD_Print("\"", 1);
 }
+
+/*****************************************************************************
+ * Print to output channel a string with escaped control characters
+ *****************************************************************************/
+void ATCMD_PrintStringASCIIEscWithDelimiterInfo(const char *pStr, size_t strLength, bool startDelimiter, bool endDelimiter)
+{
+    char tmpBuf[AT_CMD_CONF_PRINTF_OUT_BUF_SIZE];
+    int len = 0;
+
+    if(startDelimiter == true)
+        tmpBuf[len++] = '"';
+
+    /* Produce format "..." with displayable characters and known escape sequences */
+
+    while (strLength--)
+    {
+        if ((*pStr >= 0x20) && (*pStr <= 0x7e))
+        {
+            /* Displayable characters go straight through, except \ and " which
+               must be escaped with \ */
+
+            if (('\\' == *pStr) || ('"' == *pStr))
+            {
+                tmpBuf[len++] = '\\';
+            }
+
+            tmpBuf[len++] = *pStr++;
+        }
+        else
+        {
+            tmpBuf[len++] = '\\';
+
+            if (0x00 == *pStr)
+            {
+                /* Just in case we've been asked to display a string not using
+                   null termination, display \0 */
+
+                tmpBuf[len++] = '0';
+            }
+            else if ((*pStr >= 0x07) && (*pStr <= 0x0d))
+            {
+                /* These escape codes are grouped nicely together, so use a
+                   lookup table to translate */
+
+                tmpBuf[len++] = "abtnvfr"[*pStr - 0x07];
+            }
+            else if (0x1b == *pStr)
+            {
+                /* Escape is off on it's own, produce \e */
+
+                tmpBuf[len++] = 'e';
+            }
+            else
+            {
+                /* Just in case we get an invalid character, backtrack
+                   to remove the '\' */
+                len--;
+            }
+
+            pStr++;
+        }
+    }
+
+    if(endDelimiter == true)
+        tmpBuf[len++] = '"';
+
+    ATCMD_Print(tmpBuf, len);
+}
+
+
+/*****************************************************************************
+ * Print to output channel a string as a series of hex bytes
+ *****************************************************************************/
+void ATCMD_PrintStringHexWithDelimiterInfo(const uint8_t *pBytes, size_t strLength, bool startDelimiter, bool endDelimiter)
+{
+    char tmpBuf[AT_CMD_CONF_PRINTF_OUT_BUF_SIZE];
+    int len = 0;
+
+    if(startDelimiter == true)
+        tmpBuf[len++] = '[';
+
+    /* Produce the format [....] containing pairs of characters, each representing
+       a single byte */
+
+    while (strLength--)
+    {
+        ByteToStr(*pBytes++, &tmpBuf[len]);
+        len += 2;
+    }
+
+    if(endDelimiter == true)
+        tmpBuf[len++] = ']';
+
+    ATCMD_Print(tmpBuf, len);
+}
+
+
+/*****************************************************************************
+ * Print to the output channel a string, in the most appropriate form possible
+ *****************************************************************************/
+void ATCMD_PrintStringSafeWithDelimiterInfo(const char *pStr, size_t strLength, bool startDelimiter, bool endDelimiter)
+{
+    size_t i;
+    bool containsEscapableASCII = false;
+
+    if (0 == strLength)
+    {
+        ATCMD_Print("[]", 2);
+        return;
+    }
+
+    for (i=0; i<strLength; i++)
+    {
+        if ((pStr[i] >= 0x20) && (pStr[i] <= 0x7e))
+        {
+            /* ASCII, only displayable characters */
+        }
+        else if (pStr[i] >= 128)
+        {
+            /* UTF-8 and other unknown encodings as well as plain binary data.
+               No other output format supported so go straight to hex display */
+
+            ATCMD_PrintStringHexWithDelimiterInfo((uint8_t*)pStr, strLength, startDelimiter, endDelimiter);
+            return;
+        }
+        else if ((0x00 == pStr[i]) || ((pStr[i] >= 0x07) && (pStr[i] <= 0x0d)) || (0x1b == pStr[i]))
+        {
+            /* Contains escaped ASCII */
+
+            containsEscapableASCII = true;
+        }
+        else
+        {
+            /* Non displayable ASCII or non escaped ASCII characters, go
+               straight to hex display */
+
+            ATCMD_PrintStringHexWithDelimiterInfo((uint8_t*)pStr, strLength, startDelimiter, endDelimiter);
+            return;
+        }
+    }
+
+    if (true == containsEscapableASCII)
+    {
+        ATCMD_PrintStringASCIIEscWithDelimiterInfo(pStr, strLength, startDelimiter, endDelimiter);
+        return;
+    }
+
+    if(startDelimiter == true)
+        ATCMD_Print("\"", 1);
+    
+    ATCMD_Print(pStr, strLength);
+    
+    if(endDelimiter == true)
+        ATCMD_Print("\"", 1);
+}
+
 
 /*****************************************************************************
  * Sets the level of verbosity for status output

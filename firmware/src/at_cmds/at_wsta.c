@@ -397,6 +397,9 @@ static void _ConnectNotifyCallback(DRV_HANDLE handle, WDRV_PIC32MZW_ASSOC_HANDLE
         assocInfoPending            = true;
         atCmdAppContext.assocHandle = assocHandle;
 
+        WDRV_PIC32MZW_PowerSaveBroadcastTrackingSet(atCmdAppContext.wdrvHandle, true);
+        WDRV_PIC32MZW_PowerSaveModeSet(atCmdAppContext.wdrvHandle, WDRV_PIC32MZW_POWERSAVE_RUN_MODE,WDRV_PIC32MZW_POWERSAVE_PIC_ASYNC_MODE);
+
         ATCMD_APPStateMachineEvent(ATCMD_APP_EVENT_STA_CONNECTED, true);
     }
     else if (WDRV_PIC32MZW_CONN_STATE_DISCONNECTED == currentState)
@@ -583,6 +586,8 @@ static ATCMD_STATUS _WSTACExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const in
 
             ATCMD_StructStorePrint("WSTAC", wstaConfMap, &atCmdAppContext.wstaConf, id);
         }
+
+		atCmdAppContext.respond_to_app = 2;
 
         return ATCMD_STATUS_OK;
     }
@@ -775,6 +780,32 @@ static ATCMD_STATUS _WSTAExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int
                         }
                         break;
                     }
+
+#ifdef WDRV_PIC32MZW_WPA3_SUPPORT
+
+                    case 4:
+                    {
+                        /* Initialize the authentication context for WPA2/WPA3. */
+
+                        if (WDRV_PIC32MZW_STATUS_OK != WDRV_PIC32MZW_AuthCtxSetPersonal(&authCtx, (uint8_t*)&atCmdAppContext.wstaConf.credentials[1], atCmdAppContext.wstaConf.credentials[0], WDRV_PIC32MZW_AUTH_TYPE_WPA2WPA3_PERSONAL))
+                        {
+                            return ATCMD_STATUS_INVALID_PARAMETER;
+                        }
+                        break;
+                    }
+
+                    case 5:
+                    {
+                        /* Initialize the authentication context for WPA2/WPA3. */
+
+                        if (WDRV_PIC32MZW_STATUS_OK != WDRV_PIC32MZW_AuthCtxSetPersonal(&authCtx, (uint8_t*)&atCmdAppContext.wstaConf.credentials[1], atCmdAppContext.wstaConf.credentials[0], WDRV_PIC32MZW_AUTH_TYPE_WPA3_PERSONAL))
+                        {
+                            return ATCMD_STATUS_INVALID_PARAMETER;
+                        }
+                        break;
+                    }
+
+#endif
 
                     default:
                     {

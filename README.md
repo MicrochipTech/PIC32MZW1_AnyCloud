@@ -80,11 +80,23 @@ Perform the following steps:
 
 1.  Connect the PIC32MZ-W1 Curiosity/ WFI32E IOT board to your PC
 
-2.  The device enumerates as a mass storage device (**_MSD_**). This feature is currently used for reading the device certificate which is needed for registering with the cloud vendor. 
+2.  Open the Terminal application \(Ex.:Tera term\) on the computer.
 
-    **_Note:_** This feature will be removed when AT Command support for reading the device certificate is introduced.
+3.  Connect to the "USB to UART" COM port and configure the serial settings as follows:
 
-3. All the configurations on the device will be done using AT Cmds via the UART. The details regarding the supported AT CMDs can be found in the document [ATCommandReference.pdf](https://github.com/MicrochipTech/PIC32MZW1_AnyCloud/blob/main/doc/ATCommandReference.pdf) in the "doc" folder
+    -   Baud : 230400
+
+    -   Data : 8 Bits
+
+    -   Parity : None
+
+    -   Stop : 1 Bit
+
+    -   Flow Control : None
+
+    **Note**: The UART used in this case is UART1.
+
+4. All the configurations on the device will be done using AT Cmds via the UART. The details regarding the supported AT CMDs can be found in the document [ATCommandReference.pdf](https://github.com/MicrochipTech/PIC32MZW1_AnyCloud/blob/main/doc/ATCommandReference.pdf) in the "doc" folder
 
 4. Configure the home AP credentials using the AT Cmds
     
@@ -98,7 +110,7 @@ Perform the following steps:
         AT+WSTAC=13,1
         AT+WSTA=1
 
-4.  The device connects to the Wi-Fi and the IP address is assigned, and relevant AT Cmd response is sent to UART. 
+5.  The device connects to the Wi-Fi and the IP address is assigned, and relevant AT Cmd response is sent to UART. 
     
     Example:
 
@@ -106,7 +118,7 @@ Perform the following steps:
         +WSTAAIP:"192.168.159.108"
         +TIME:2,3864185092
 
-5.  Configure the device to connect to Cloud - in this case either of AWS or Azure or test.mosquitto.org
+6.  Configure the device to connect to Cloud - in this case either of AWS or Azure or test.mosquitto.org
 
     Example:
 
@@ -117,7 +129,7 @@ Perform the following steps:
     
     Note: One needs to register the device certificate with AWS and Azure portal in case the user wants to connect to either of these cloud vendors. More details in [Cloud Setup Procedure](https://github.com/MicrochipTech/PIC32MZW1_AnyCloud/blob/main/doc/CloudSetupProcedure.pdf) document.
 
-6. The device connects to the Cloud, and relevant AT Cmd response is sent to UART.
+7. The device connects to the Cloud, and relevant AT Cmd response is sent to UART.
 
     Example:
 

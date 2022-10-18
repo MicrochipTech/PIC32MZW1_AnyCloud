@@ -49,6 +49,8 @@ THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 extern  int CheckAvailableSize(WOLFSSL *ssl, int size);
 #include "wolfssl/wolfcrypt/port/atmel/atmel.h"
 
+unsigned char *g_NewCertFile;
+long g_NewCertSz = 0;
 
 typedef struct 
 {
@@ -81,7 +83,7 @@ NET_PRES_EncProviderObject net_pres_EncProviderStreamClient0 =
 };
 	
 net_pres_wolfsslInfo net_pres_wolfSSLInfoStreamClient0;
-	
+
 int NET_PRES_EncGlue_StreamClientReceiveCb0(void *sslin, char *buf, int sz, void *ctx)
 {
     int fd = *(int *)ctx;
@@ -158,7 +160,7 @@ bool NET_PRES_EncProviderStreamClientInit0(NET_PRES_TransportObject * transObjec
 			return false;
 		}
 #endif	
-#if 1// MOSQUITTO_ORG
+#if 1 // MOSQUITTO_ORG
 		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, app_client_cert_der_mosquitto_org, sizeof_app_client_cert_der_mosquitto_org, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
 		{
 			// Couldn't load the CA certificates
@@ -175,6 +177,19 @@ bool NET_PRES_EncProviderStreamClientInit0(NET_PRES_TransportObject * transObjec
 			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
 			return false;
 		}
+#endif
+#if 1 //Certificate from Host
+    if(g_NewCertSz)
+    {
+        if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, g_NewCertFile, g_NewCertSz, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
+        {
+                // Couldn't load the CA certificates
+                SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
+                wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
+                return false;
+        }
+        g_NewCertSz = 0;
+    }
 #endif
 #else
 	if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, caCertsPtr, caCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
@@ -376,4 +391,25 @@ int32_t NET_PRES_EncProviderMaxOutputSize0(void * providerData)
         return 0;
     }  
     return ret;
+}
+
+bool NET_PRES_LoadVerifyDerBuffer(unsigned char* in, long sz)
+{
+    int ret = 0;
+    if(net_pres_wolfSSLInfoStreamClient0.context == NULL)
+    {
+        g_NewCertFile = in;
+        g_NewCertSz = sz;
+        return true;
+    }
+    
+    ret = wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, in, sz, SSL_FILETYPE_ASN1);
+    if (ret != SSL_SUCCESS)
+    {
+        // Couldn't load the CA certificates
+        SYS_CONSOLE_PRINT("Something went wrong (%d) loading the CA certificates\r\n", ret);
+        wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
+        return false;
+    }
+    return true;
 }

@@ -325,6 +325,16 @@ typedef enum
 
 } INT_SOURCE;
 
+typedef enum
+{
+    EXTERNAL_INT_0 = _IEC0_INT0IE_MASK,
+
+
+
+
+}EXTERNAL_INT_PIN;
+
+typedef  void (*EXTERNAL_INT_PIN_CALLBACK) (EXTERNAL_INT_PIN pin, uintptr_t context);
 
 // *****************************************************************************
 // *****************************************************************************
@@ -351,6 +361,26 @@ void EVIC_INT_Enable( void );
 bool EVIC_INT_Disable( void );
 
 void EVIC_INT_Restore( bool state );
+
+bool EVIC_ExternalInterruptCallbackRegister(
+        EXTERNAL_INT_PIN extIntPin,
+        const EXTERNAL_INT_PIN_CALLBACK callback,
+        uintptr_t context
+    );
+
+void EVIC_ExternalInterruptEnable( EXTERNAL_INT_PIN extIntPin );
+
+void EVIC_ExternalInterruptDisable( EXTERNAL_INT_PIN extIntPin );
+
+typedef struct {
+
+    /* Callback for event on target pin*/
+    EXTERNAL_INT_PIN_CALLBACK        callback;
+
+    /* Callback Context */
+    uintptr_t               context;
+
+} EXT_INT_PIN_CALLBACK_OBJ;
 
 
 // DOM-IGNORE-BEGIN

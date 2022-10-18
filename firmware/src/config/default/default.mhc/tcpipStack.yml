@@ -46,7 +46,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tcpipStack, value: '29'}
+        attributes: {id: tcpipStack, value: '47'}
   - type: String
     attributes: {id: TCPIP_STACK_MALLOC_FUNC}
     children:

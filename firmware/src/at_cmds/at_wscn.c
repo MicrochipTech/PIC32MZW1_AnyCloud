@@ -478,7 +478,8 @@ static ATCMD_STATUS _WSCNUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_C
                     if (WDRV_PIC32MZW_STATUS_BSS_FIND_END == WDRV_PIC32MZW_BSSFindNext(atCmdAppContext.wdrvHandle, _BSSFindNotifyCallback))
                     {
                         atCmdAppContext.wscnScanInProgress = false;
-                        ATCMD_Print("+WSCNDONE\r\n", 11);
+						ATCMD_Print("+WSCNDONE\r\n", 11);
+						atCmdAppContext.respond_to_app = 2;
                     }
                 }
             }

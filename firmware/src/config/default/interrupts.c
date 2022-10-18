@@ -62,33 +62,35 @@
 
 
 void CORE_TIMER_InterruptHandler( void );
+void EXTERNAL_0_InterruptHandler( void );
 void TIMER_2_InterruptHandler( void );
 void TIMER_3_InterruptHandler( void );
 void RTCC_InterruptHandler( void );
-void DRV_USBFS_USB_Handler( void );
-void SPI1_RX_InterruptHandler( void );
-void SPI1_TX_InterruptHandler( void );
 void UART1_FAULT_InterruptHandler( void );
 void UART1_RX_InterruptHandler( void );
 void UART1_TX_InterruptHandler( void );
+void CHANGE_NOTICE_A_InterruptHandler( void );
 void I2C2_BUS_InterruptHandler( void );
 void I2C2_MASTER_InterruptHandler( void );
 void WDRV_PIC32MZW_TasksRFSMCISR( void );
 void WDRV_PIC32MZW_TasksRFMACISR( void );
 void WDRV_PIC32MZW_TasksRFTimer0ISR( void );
-void ADC_DATA15_InterruptHandler( void );
 void DRV_BA414E_InterruptHandler( void );
 void DRV_BA414E_ErrorInterruptHandler( void );
 
 
 
 /* All the handlers are defined here.  Each will call its PLIB-specific function. */
-
 void CORE_TIMER_Handler (void)
 {
     CORE_TIMER_InterruptHandler();
 }
 
+
+void EXTERNAL_0_Handler (void)
+{
+    EXTERNAL_0_InterruptHandler();
+}
 
 
 void TIMER_2_Handler (void)
@@ -106,21 +108,6 @@ void RTCC_Handler (void)
     RTCC_InterruptHandler();
 }
 
-void USB_Handler (void)
-{
-    DRV_USBFS_USB_Handler();
-}
-
-void SPI1_RX_Handler (void)
-{
-    SPI1_RX_InterruptHandler();
-}
-
-void SPI1_TX_Handler (void)
-{
-    SPI1_TX_InterruptHandler();
-}
-
 void UART1_FAULT_Handler (void)
 {
     UART1_FAULT_InterruptHandler();
@@ -134,6 +121,11 @@ void UART1_RX_Handler (void)
 void UART1_TX_Handler (void)
 {
     UART1_TX_InterruptHandler();
+}
+
+void CHANGE_NOTICE_A_Handler (void)
+{
+    CHANGE_NOTICE_A_InterruptHandler();
 }
 
 void I2C2_BUS_Handler (void)
@@ -159,11 +151,6 @@ void RFMAC_Handler (void)
 void RFTM0_Handler (void)
 {
     WDRV_PIC32MZW_TasksRFTimer0ISR();
-}
-
-void ADC_DATA15_Handler (void)
-{
-    ADC_DATA15_InterruptHandler();
 }
 
 void CRYPTO1_Handler (void)

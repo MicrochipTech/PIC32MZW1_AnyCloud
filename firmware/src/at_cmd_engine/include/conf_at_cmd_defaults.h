@@ -35,7 +35,7 @@
 
 /* Maximum length of a formatting print string */
 #ifndef AT_CMD_CONF_PRINTF_OUT_BUF_SIZE
-#define AT_CMD_CONF_PRINTF_OUT_BUF_SIZE         256
+#define AT_CMD_CONF_PRINTF_OUT_BUF_SIZE         1500
 #endif
 
 /* Character to display first in command mode as a user prompt */
@@ -72,7 +72,8 @@
 #ifndef AT_CMD_CONF_BIN_FAST_BUFFER_SIZE
 #define AT_CMD_CONF_BIN_FAST_BUFFER_SIZE        16
 #endif
-
+#define AT_CMD_CONF_BIN_MAX_BUFFER_SIZE         1400
+        
 /* Attention base string. All commands must start with this. */
 #ifndef AT_CMD_CONF_AT_BASE_STRING
 #define AT_CMD_CONF_AT_BASE_STRING              "AT"

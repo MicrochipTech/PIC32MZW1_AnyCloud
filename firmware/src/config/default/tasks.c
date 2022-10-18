@@ -70,28 +70,6 @@ void _APP_Tasks(  void *pvParameters  )
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
-/* Handle for the MSD_APP_Tasks. */
-TaskHandle_t xMSD_APP_Tasks;
-
-void _MSD_APP_Tasks(  void *pvParameters  )
-{   
-    while(1)
-    {
-        MSD_APP_Tasks();
-        vTaskDelay(50 / portTICK_PERIOD_MS);
-    }
-}
-/* Handle for the APP_CONTROL_Tasks. */
-TaskHandle_t xAPP_CONTROL_Tasks;
-
-void _APP_CONTROL_Tasks(  void *pvParameters  )
-{   
-    while(1)
-    {
-        APP_CONTROL_Tasks();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
-}
 /* Handle for the MQTT_APP_Tasks. */
 TaskHandle_t xMQTT_APP_Tasks;
 
@@ -115,51 +93,11 @@ void _NET_PRES_Tasks(  void *pvParameters  )
 }
 
 
-void _SYS_FS_Tasks(  void *pvParameters  )
-{
-    while(1)
-    {
-        SYS_FS_Tasks();
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
-
-
-
 void _DRV_BA414E_Tasks(  void *pvParameters  )
 {
     while(1)
     {
         DRV_BA414E_Tasks(sysObj.ba414e);
-    }
-}
-
-void _USB_DEVICE_Tasks(  void *pvParameters  )
-{
-    while(1)
-    {
-				 /* USB Device layer tasks routine */
-        USB_DEVICE_Tasks(sysObj.usbDevObject0);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
-
-void _DRV_MEMORY_0_Tasks(  void *pvParameters  )
-{
-    while(1)
-    {
-        DRV_MEMORY_Tasks(sysObj.drvMemory0);
-        vTaskDelay(DRV_MEMORY_RTOS_DELAY_IDX0 / portTICK_PERIOD_MS);
-    }
-}
-
-void _DRV_USBFS_Tasks(  void *pvParameters  )
-{
-    while(1)
-    {
-				 /* USB FS Driver Task Routine */
-        DRV_USBFS_Tasks(sysObj.drvUSBFSObject);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
@@ -220,25 +158,8 @@ void SYS_Tasks ( void )
     /* Maintain system services */
     
 
-    xTaskCreate( _SYS_FS_Tasks,
-        "SYS_FS_TASKS",
-        SYS_FS_STACK_SIZE,
-        (void*)NULL,
-        SYS_FS_PRIORITY,
-        (TaskHandle_t*)NULL
-    );
-
-
 
     /* Maintain Device Drivers */
-        xTaskCreate( _DRV_MEMORY_0_Tasks,
-        "DRV_MEM_0_TASKS",
-        DRV_MEMORY_STACK_SIZE_IDX0,
-        (void*)NULL,
-        DRV_MEMORY_PRIORITY_IDX0,
-        (TaskHandle_t*)NULL
-    );
-
     xTaskCreate( _WDRV_PIC32MZW1_Tasks,
         "WDRV_PIC32MZW1_Tasks",
         1024,
@@ -267,16 +188,6 @@ void SYS_Tasks ( void )
         DRV_BA414E_RTOS_STACK_SIZE,
         (void*)NULL,
         DRV_BA414E_RTOS_TASK_PRIORITY,
-        (TaskHandle_t*)NULL
-    );
-
-
-    /* Create OS Thread for USB_DEVICE_Tasks. */
-    xTaskCreate( _USB_DEVICE_Tasks,
-        "USB_DEVICE_TASKS",
-        1024,
-        (void*)NULL,
-        1,
         (TaskHandle_t*)NULL
     );
 
@@ -312,23 +223,6 @@ void SYS_Tasks ( void )
                 1,
                 &xAPP_Tasks);
 
-    /* Create OS Thread for MSD_APP_Tasks. */
-    xTaskCreate((TaskFunction_t) _MSD_APP_Tasks,
-                "MSD_APP_Tasks",
-                2048,
-                NULL,
-                1,
-                &xMSD_APP_Tasks);
-#if 0
-    /* Create OS Thread for APP_CONTROL_Tasks. */
-    xTaskCreate((TaskFunction_t) _APP_CONTROL_Tasks,
-                "APP_CONTROL_Tasks",
-                512,
-                NULL,
-                1,
-                &xAPP_CONTROL_Tasks);
-#endif
-    
     /* Create OS Thread for MQTT_APP_Tasks. */
     xTaskCreate((TaskFunction_t) _MQTT_APP_Tasks,
                 "MQTT_APP_Tasks",
