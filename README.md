@@ -31,9 +31,9 @@ This page describes the UART to Any Cloud Solution for the PIC32MZ-W1 Curiosity/
 
 6. Complete source to enable customization when required
 
-7. Supports MQTT, Socket programming(TCP/ UDP), SNTP, TLS (v1.3/ v1.2), ICMP, IGMP, DNS, DHCP
+7. Supports MQTT, Socket programming(TCP/ UDP), SNTP, TLS (v1.3/ v1.2), ICMP, IGMP, DNS, DHCP, Low Power, WPA3, Loading/ Reading Certificates via UART, WiFi Provisioning.
 
-8. Features like OTA, Wi-Fi Provisioning, Low Power, Trust Flex, IPv6, mDNS planned for future releases.
+8. Features like OTA, Trust Flex, IPv6, mDNS planned for future releases.
 
 
 
