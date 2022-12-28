@@ -61,10 +61,10 @@ void EVIC_Initialize( void )
     IPC2SET = 0x400 | 0x0;  /* TIMER_2:  Priority 1 / Subpriority 0 */
     IPC3SET = 0x40000 | 0x0;  /* TIMER_3:  Priority 1 / Subpriority 0 */
     IPC8SET = 0x400 | 0x0;  /* RTCC:  Priority 1 / Subpriority 0 */
-    IPC9SET = 0x40000 | 0x0;  /* UART1_FAULT:  Priority 1 / Subpriority 0 */
-    IPC9SET = 0x4000000 | 0x0;  /* UART1_RX:  Priority 1 / Subpriority 0 */
-    IPC10SET = 0x4 | 0x0;  /* UART1_TX:  Priority 1 / Subpriority 0 */
     IPC11SET = 0x4 | 0x0;  /* CHANGE_NOTICE_A:  Priority 1 / Subpriority 0 */
+    IPC14SET = 0x4 | 0x0;  /* UART2_FAULT:  Priority 1 / Subpriority 0 */
+    IPC14SET = 0x400 | 0x0;  /* UART2_RX:  Priority 1 / Subpriority 0 */
+    IPC14SET = 0x40000 | 0x0;  /* UART2_TX:  Priority 1 / Subpriority 0 */
     IPC14SET = 0x4000000 | 0x0;  /* I2C2_BUS:  Priority 1 / Subpriority 0 */
     IPC15SET = 0x400 | 0x0;  /* I2C2_MASTER:  Priority 1 / Subpriority 0 */
     IPC20SET = 0x4000000 | 0x0;  /* RFSMC:  Priority 1 / Subpriority 0 */
@@ -73,8 +73,8 @@ void EVIC_Initialize( void )
     IPC41SET = 0x40000 | 0x0;  /* CRYPTO1:  Priority 1 / Subpriority 0 */
     IPC41SET = 0x4000000 | 0x0;  /* CRYPTO1_FAULT:  Priority 1 / Subpriority 0 */
 
-	/* Initialize External interrupt 0 callback object */
-	extInt0CbObj.callback = NULL;
+    /* Initialize External interrupt 0 callback object */
+    extInt0CbObj.callback = NULL;
 
 }
 

@@ -4,6 +4,13 @@ attributes: {id: tcpipStack}
 children:
 - type: Symbols
   children:
+  - type: Integer
+    attributes: {id: TCPIP_RTOS_TASK_STACK_SIZE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '8192'}
   - type: String
     attributes: {id: TCPIP_STACK_CALLOC_FUNC}
     children:
@@ -121,4 +128,4 @@ children:
         children:
         - {type: Value, value: sys_console}
 - type: ElementPosition
-  attributes: {x: '30', y: '520', id: tcpipStack}
+  attributes: {x: '31', y: '520', id: tcpipStack}

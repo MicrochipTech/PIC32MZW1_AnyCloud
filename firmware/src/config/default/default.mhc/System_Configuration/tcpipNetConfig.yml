@@ -60,6 +60,8 @@ children:
           children:
           - type: Dynamic
             attributes: {id: tcpipNetConfig_0, value: MCHPBOARD_W}
+          - type: User
+            attributes: {value: MCHPBOARD_W}
       - type: String
         attributes: {id: TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0}
         children:

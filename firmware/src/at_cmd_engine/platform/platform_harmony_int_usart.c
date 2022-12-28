@@ -34,8 +34,11 @@
 
 #include "osal/osal.h"
 #include "peripheral/uart/plib_uart_common.h"
+#include "peripheral/uart/plib_uart1.h"
 
 static uint32_t volatile timerMS;
+#define ATCMD_UART_BAUD_RATE_DEF    230400
+uint32_t currBaudRate = ATCMD_UART_BAUD_RATE_DEF;
 
 /* Access semaphore for printing OK and asynch events */
 OSAL_SEM_HANDLE_TYPE printEventSemaphore;
@@ -88,6 +91,20 @@ void ATCMD_PlatformUARTSetBaudRate(uint32_t baud)
     {
         pUsart->plib->read(&pUsart->receive.pBuffer[pUsart->receive.inOffset], 1);
     }
+#else
+    UART_SERIAL_SETUP setup;
+
+    memset(&setup, 0, sizeof(UART_SERIAL_SETUP));
+    setup.baudRate = baud; 
+    setup.dataWidth = UART_DATA_8_BIT;
+    setup.parity = UART_PARITY_NONE;
+    setup.stopBits = UART_STOP_1_BIT;
+
+    if(UART2_SerialSetup( &setup, 0) == true)
+    {
+        currBaudRate = baud;        
+    }
+    
 #endif
 }
 
@@ -103,13 +120,13 @@ uint32_t ATCMD_PlatformUARTGetBaudRate(void)
 
     return pUsart->setup.baudRate;
 #else
-    return 0;
+    return currBaudRate;
 #endif    
 }
 
 size_t ATCMD_PlatformUARTReadGetCount(void)
 {
-    return UART1_ReadCountGet();
+    return UART2_ReadCountGet();
 }
 
 uint8_t ATCMD_PlatformUARTReadGetByte(void)
@@ -126,12 +143,12 @@ uint8_t ATCMD_PlatformUARTReadGetByte(void)
 
 size_t ATCMD_PlatformUARTReadGetBuffer(void *pBuf, size_t numBytes)
 {
-    return UART1_Read(pBuf, numBytes);
+    return UART2_Read(pBuf, numBytes);
 }
 
 size_t ATCMD_PlatformUARTWriteGetSpace(void)
 {
-    return UART1_WriteFreeBufferCountGet();
+    return UART2_WriteFreeBufferCountGet();
 }
 
 bool ATCMD_PlatformUARTWritePutByte(uint8_t b)
@@ -147,8 +164,8 @@ bool ATCMD_PlatformUARTWritePutBuffer(const void *pBuf, const size_t numBytes)
     }
 
 //	uint8_t b = '\0';
-    UART1_Write((uint8_t *)pBuf, numBytes);
-//	UART1_Write(&b, 1);
+    UART2_Write((uint8_t *)pBuf, numBytes);
+//	UART2_Write(&b, 1);
     
 
     if (OSAL_SEM_Post(&printEventSemaphore) != OSAL_RESULT_TRUE)

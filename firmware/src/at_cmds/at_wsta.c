@@ -398,7 +398,7 @@ static void _ConnectNotifyCallback(DRV_HANDLE handle, WDRV_PIC32MZW_ASSOC_HANDLE
         atCmdAppContext.assocHandle = assocHandle;
 
         WDRV_PIC32MZW_PowerSaveBroadcastTrackingSet(atCmdAppContext.wdrvHandle, true);
-        WDRV_PIC32MZW_PowerSaveModeSet(atCmdAppContext.wdrvHandle, WDRV_PIC32MZW_POWERSAVE_RUN_MODE,WDRV_PIC32MZW_POWERSAVE_PIC_ASYNC_MODE);
+        WDRV_PIC32MZW_PowerSaveModeSet(atCmdAppContext.wdrvHandle, WDRV_PIC32MZW_POWERSAVE_RUN_MODE,WDRV_PIC32MZW_POWERSAVE_PIC_ASYNC_MODE, NULL);
 
         ATCMD_APPStateMachineEvent(ATCMD_APP_EVENT_STA_CONNECTED, true);
     }
@@ -553,18 +553,6 @@ static ATCMD_STATUS _WSTACExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const in
 {
     if (0 == numParams)
     {
-#if 0 //TBR        
-        size_t deviceCertSize = 1024;
-        uint8_t deviceCert[deviceCertSize];
-        memset(deviceCert, 0, deviceCertSize);
-        MSD_APP_Read_DeviceCertPem((uint8_t*) & deviceCert, &deviceCertSize);
-        
-        //ATCMD_EnterBinaryMode(NULL);
-        ATCMD_Printf("WSTAC:(%d)", deviceCertSize);
-        for(id =0; id < deviceCertSize; id++)
-            ATCMD_Printf("%c", deviceCert[id]);
-        //ATCMD_LeaveBinaryMode();
-#endif
         int id;        
 
         /* Dump all configuration elements */

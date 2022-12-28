@@ -31,6 +31,7 @@
 #include "at_cmds/at_cmd_xmodem.h"
 #include "at_cmds/at_cmd_pkcs.h"
 #include "cert_header.h"
+#include "net_pres/pres/net_pres_enc_glue.h"
 
 /*******************************************************************************
 * Command interface prototypes
@@ -38,8 +39,6 @@
 static ATCMD_STATUS _LOADInit(const AT_CMD_TYPE_DESC* pCmdTypeDesc);
 static ATCMD_STATUS _LOADExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const int numParams, ATCMD_PARAM *pParamList);
 static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_CMD_TYPE_DESC* pCurrentCmdTypeDesc);
-
-extern bool NET_PRES_LoadVerifyDerBuffer(unsigned char* in, long sz);
 
 /*******************************************************************************
 * Command parameters
@@ -354,8 +353,7 @@ static ATCMD_STATUS _LOADUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const AT_C
                 {
                     atCmdAppContext.certFileLength = derFileLength;
 
-                    NET_PRES_LoadVerifyDerBuffer(atCmdAppContext.certFile, derFileLength);
-                
+                    NET_PRES_SetCertificate(atCmdAppContext.certFile, derFileLength, SSL_FILETYPE_ASN1);               
                     ATCMD_Print("0\r\n", 3);
                 }
                 else

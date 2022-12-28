@@ -69,39 +69,25 @@ void UART1_Initialize( void );
 
 bool UART1_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq );
 
+bool UART1_Write( void *buffer, const size_t size );
+
+bool UART1_Read( void *buffer, const size_t size );
+
 UART_ERROR UART1_ErrorGet( void );
 
 bool UART1_AutoBaudQuery( void );
 
 void UART1_AutoBaudSet( bool enable );
 
-size_t UART1_Write(uint8_t* pWrBuffer, const size_t size );
+int UART1_ReadByte( void );
 
-size_t UART1_WriteCountGet(void);
+bool UART1_ReceiverIsReady( void );
 
-size_t UART1_WriteFreeBufferCountGet(void);
+void UART1_WriteByte( int data );
 
-size_t UART1_WriteBufferSizeGet(void);
+bool UART1_TransmitterIsReady( void );
 
-bool UART1_WriteNotificationEnable(bool isEnabled, bool isPersistent);
-
-void UART1_WriteThresholdSet(uint32_t nBytesThreshold);
-
-void UART1_WriteCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context);
-
-size_t UART1_Read(uint8_t* pRdBuffer, const size_t size);
-
-size_t UART1_ReadCountGet(void);
-
-size_t UART1_ReadFreeBufferCountGet(void);
-
-size_t UART1_ReadBufferSizeGet(void);
-
-bool UART1_ReadNotificationEnable(bool isEnabled, bool isPersistent);
-
-void UART1_ReadThresholdSet(uint32_t nBytesThreshold);
-
-void UART1_ReadCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context);
+bool UART1_TransmitComplete( void );
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

@@ -213,7 +213,9 @@ void APP_SetSleepMode(uint8_t val)
         /* PIC DS or XDS mode */
         case 4:
             PMD3bits.W24GMD = 1;
-            POWER_LowPowerModeEnter(LOW_POWER_DEEP_SLEEP_MODE);
+            APP_INT_StatusClear();
+            APP_INT_SourceDisable();
+            POWER_LowPowerModeEnter(LOW_POWER_EXTREME_DEEP_SLEEP_MODE);
             break;
             
         /* Wi-Fi WON */
@@ -243,7 +245,7 @@ void APP_Initialize(void) {
 
 	resetCause = RCON_ResetCauseGet();
 
-	POWER_ReleaseGPIO();
+	POWER_DS_ReleaseGPIO();
 
 	/* Check if RESET was after deep sleep wakeup */
 	if (((resetCause & RCON_RESET_CAUSE_DPSLP) == RCON_RESET_CAUSE_DPSLP))

@@ -457,7 +457,14 @@ ATCMD_STATUS ATCMD_WAP_Start(bool activeProvisioning)
         dhcpsPoolConfig.priDNS          = dhcpsDNS1IPAddressStr;
         dhcpsPoolConfig.secondDNS       = dhcpsDNS1IPAddressStr;
 
-        if (false == TCPIP_DHCPS_Enable(atCmdAppContext.netHandle))
+        bool TCPIP_DHCPS_SetInterfaceConf(const TCPIP_NET_HANDLE *handle, TCPIP_DHCPS_ADDRESS_CONFIG *config);
+   		
+        if (false == TCPIP_DHCPS_SetInterfaceConf(atCmdAppContext.netHandle, &dhcpsPoolConfig))
+		{
+			return ATCMD_APP_STATUS_NETWORK_ERROR;
+		}
+		
+		if (false == TCPIP_DHCPS_Enable(atCmdAppContext.netHandle))
         {
             return ATCMD_APP_STATUS_NETWORK_ERROR;
         }

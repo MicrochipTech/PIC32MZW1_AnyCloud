@@ -1139,6 +1139,11 @@ static ATCMD_STATUS _mqttConnectStart(MqttClient *pMQTTClient, int cleanSession)
 		cloudConfig.sBrokerConfig.tlsEnabled = 0;
 	}
 		
+        if(atCmdAppContext.mqttConf.keepAlive)
+        {
+            cloudConfig.sBrokerConfig.keepAliveInterval = atCmdAppContext.mqttConf.keepAlive;
+        }
+        
 	pMQTTClient->mqtt_handle = SYS_MQTT_Connect(&cloudConfig, _MQTTCallback, NULL);
 
 	mqtt_appData.SysMqttHandle = pMQTTClient->mqtt_handle;

@@ -38,6 +38,8 @@
                   <itemPath>../src/config/default/driver/wifi/pic32mzw1/include/wdrv_pic32mzw_sta.h</itemPath>
                   <itemPath>../src/config/default/driver/wifi/pic32mzw1/include/wdrv_pic32mzw_ps.h</itemPath>
                   <itemPath>../src/config/default/driver/wifi/pic32mzw1/include/wdrv_pic32mzw_custie.h</itemPath>
+                  <itemPath>../src/config/default/driver/wifi/pic32mzw1/include/drv_pic32mzw1_tls.h</itemPath>
+                  <itemPath>../src/config/default/driver/wifi/pic32mzw1/include/wdrv_pic32mzw_ie.h</itemPath>
                 </logicalFolder>
               </logicalFolder>
             </logicalFolder>
@@ -46,6 +48,20 @@
           </logicalFolder>
           <logicalFolder name="f7" displayName="library" projectFiles="true">
             <logicalFolder name="f1" displayName="cryptoauthlib" projectFiles="true">
+              <logicalFolder name="atcacert" displayName="atcacert" projectFiles="true">
+              </logicalFolder>
+              <logicalFolder name="calib" displayName="calib" projectFiles="true">
+              </logicalFolder>
+              <logicalFolder name="crypto" displayName="crypto" projectFiles="true">
+                <logicalFolder name="hashes" displayName="hashes" projectFiles="true">
+                </logicalFolder>
+              </logicalFolder>
+              <logicalFolder name="hal" displayName="hal" projectFiles="true">
+              </logicalFolder>
+              <logicalFolder name="host" displayName="host" projectFiles="true">
+              </logicalFolder>
+              <logicalFolder name="jwt" displayName="jwt" projectFiles="true">
+              </logicalFolder>
               <logicalFolder name="f1" displayName="tng" projectFiles="true">
                 <itemPath>../src/config/default/library/cryptoauthlib/tng/tflxtls_cert_def_4_device.h</itemPath>
                 <itemPath>../src/config/default/library/cryptoauthlib/tng/tnglora_cert_def_1_signer.h</itemPath>
@@ -138,6 +154,8 @@
                 <itemPath>../src/config/default/library/tcpip/src/lldp_tlv.h</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_mac_bridge_manager.h</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_mac_bridge_private.h</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/dhcp_server_manager.h</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/dhcp_server_private.h</itemPath>
               </logicalFolder>
               <itemPath>../src/config/default/library/tcpip/tcpip_common_ports.h</itemPath>
               <itemPath>../src/config/default/library/tcpip/tcpip_mac.h</itemPath>
@@ -184,6 +202,7 @@
               <itemPath>../src/config/default/library/tcpip/tcpip.h</itemPath>
               <itemPath>../src/config/default/library/tcpip/tcpip_mac_bridge.h</itemPath>
               <itemPath>../src/config/default/library/tcpip/tcpip_ethernet.h</itemPath>
+              <itemPath>../src/config/default/library/tcpip/dhcp_server.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f6" displayName="net_pres" projectFiles="true">
@@ -596,6 +615,8 @@
                 <itemPath>../src/config/default/driver/wifi/pic32mzw1/wdrv_pic32mzw_sta.c</itemPath>
                 <itemPath>../src/config/default/driver/wifi/pic32mzw1/wdrv_pic32mzw_ps.c</itemPath>
                 <itemPath>../src/config/default/driver/wifi/pic32mzw1/wdrv_pic32mzw_custie.c</itemPath>
+                <itemPath>../src/config/default/driver/wifi/pic32mzw1/drv_pic32mzw1_tls.c</itemPath>
+                <itemPath>../src/config/default/driver/wifi/pic32mzw1/wdrv_pic32mzw_ie.c</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
@@ -748,8 +769,8 @@
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_notify.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_packet.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/sntp.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/dhcps.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/igmp.c</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/dhcps.c</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
@@ -1073,7 +1094,7 @@
           <itemPath>../src/config/default/default.mhc/System_Configuration/sys_console.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/sys_debug.yml</itemPath>
           <itemPath>../src/config/default/default.mhc/System_Configuration/tcpipNetConfig.yml</itemPath>
-          <itemPath>../src/config/default/default.mhc/System_Configuration/uart1.yml</itemPath>
+          <itemPath>../src/config/default/default.mhc/System_Configuration/uart2.yml</itemPath>
         </logicalFolder>
         <itemPath>../src/config/default/default.mhc/core.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/dfp.yml</itemPath>
@@ -1096,7 +1117,7 @@
         <itemPath>../src/config/default/default.mhc/tcpipStack.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tmr2.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tmr3.yml</itemPath>
-        <itemPath>../src/config/default/default.mhc/uart2.yml</itemPath>
+        <itemPath>../src/config/default/default.mhc/uart1.yml</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="wolfcrypt" projectFiles="true">
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/misc.c</itemPath>
@@ -1105,6 +1126,7 @@
       <itemPath>Makefile</itemPath>
       <itemPath>../src/config/default/harmony-manifest-failure.yml</itemPath>
       <itemPath>../src/config/default/harmony-manifest-success.yml</itemPath>
+      <itemPath>PIC32MZW1_AnyCloud.mc3</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -1120,7 +1142,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>pkob4hybrid</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.50</languageToolchainVersion>
+        <languageToolchainVersion>3.01</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -1561,6 +1583,7 @@
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value="-minterlink-compressed"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
@@ -1592,6 +1615,7 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
+        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -1621,6 +1645,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -1637,7 +1662,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="164000"/>
+        <property key="heap-size" value="160000"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -1660,6 +1685,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>

@@ -153,7 +153,16 @@ static ATCMD_STATUS _READCERTExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const
         {
             readCertState.numBytesBuffered = AT_CMD_READCERT_BUFFER_SZ;
             memset(readCertState.buffer, 0, AT_CMD_READCERT_BUFFER_SZ);
-            ATCMD_Read_RootCert(readCertState.buffer, &readCertState.numBytesBuffered);
+            size_t deviceCertSize = 1500;
+            uint8_t deviceCert[deviceCertSize];
+
+            ATCMD_Read_RootCert(deviceCert, &deviceCertSize);
+
+            readCertState.numBytesBuffered = wc_DerToPem(deviceCert, deviceCertSize, readCertState.buffer, readCertState.numBytesBuffered, CERT_TYPE);
+            if ((readCertState.numBytesBuffered <= 0)) {
+                SYS_CONSOLE_PRINT("    Failed converting device Cert to PEM (%d)\r\n", readCertState.numBytesBuffered);
+                return readCertState.numBytesBuffered;
+            }
 
             ATCMD_Printf("+READCERT:2, %d,", readCertState.numBytesBuffered);
             if(readCertState.numBytesBuffered < maxOutputPrintBytes)

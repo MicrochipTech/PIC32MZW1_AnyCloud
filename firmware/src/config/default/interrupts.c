@@ -66,10 +66,10 @@ void EXTERNAL_0_InterruptHandler( void );
 void TIMER_2_InterruptHandler( void );
 void TIMER_3_InterruptHandler( void );
 void RTCC_InterruptHandler( void );
-void UART1_FAULT_InterruptHandler( void );
-void UART1_RX_InterruptHandler( void );
-void UART1_TX_InterruptHandler( void );
 void CHANGE_NOTICE_A_InterruptHandler( void );
+void UART2_FAULT_InterruptHandler( void );
+void UART2_RX_InterruptHandler( void );
+void UART2_TX_InterruptHandler( void );
 void I2C2_BUS_InterruptHandler( void );
 void I2C2_MASTER_InterruptHandler( void );
 void WDRV_PIC32MZW_TasksRFSMCISR( void );
@@ -108,24 +108,24 @@ void RTCC_Handler (void)
     RTCC_InterruptHandler();
 }
 
-void UART1_FAULT_Handler (void)
-{
-    UART1_FAULT_InterruptHandler();
-}
-
-void UART1_RX_Handler (void)
-{
-    UART1_RX_InterruptHandler();
-}
-
-void UART1_TX_Handler (void)
-{
-    UART1_TX_InterruptHandler();
-}
-
 void CHANGE_NOTICE_A_Handler (void)
 {
     CHANGE_NOTICE_A_InterruptHandler();
+}
+
+void UART2_FAULT_Handler (void)
+{
+    UART2_FAULT_InterruptHandler();
+}
+
+void UART2_RX_Handler (void)
+{
+    UART2_RX_InterruptHandler();
+}
+
+void UART2_TX_Handler (void)
+{
+    UART2_TX_InterruptHandler();
 }
 
 void I2C2_BUS_Handler (void)

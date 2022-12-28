@@ -131,6 +131,7 @@ const AT_CMD_TYPE_DESC atCmdTypeDescGMR =
     };
 #endif
 
+
 const AT_CMD_TYPE_DESC atCmdTypeDescIPR =
     {
         .pCmdName   = "+IPR",
@@ -175,7 +176,6 @@ const AT_CMD_TYPE_DESC atCmdTypeDescIPR =
 /*******************************************************************************
 * Local defines and types
 *******************************************************************************/
-
 /*******************************************************************************
 * Local data
 *******************************************************************************/
@@ -266,6 +266,7 @@ static ATCMD_STATUS _InternalCmdExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, co
             break;
         }
 #endif
+
         case ATCMD_INT_APP_VAL_IPR:
         {
             if (0 == numParams)
@@ -274,9 +275,23 @@ static ATCMD_STATUS _InternalCmdExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, co
             }
             else if (1 == numParams)
             {
+                uint32_t validBaudRate[] = {9600, 14400, 19200, 38400, 57600, 115200, 230400};
+                uint32_t i = 0;
+
                 /* Check the parameter types are correct */
 
                 if (false == ATCMD_ParamValidateTypes(pCmdTypeDesc, 1, numParams, pParamList))
+                {
+                    return ATCMD_STATUS_INVALID_PARAMETER;
+                }
+
+                for(i = 0; i < sizeof(validBaudRate)/ sizeof(uint32_t); i++)
+                {
+                    if(validBaudRate[i] == pParamList[0].value.i)
+                        break;
+                }
+
+                if(i == (sizeof(validBaudRate)/ sizeof(uint32_t)))
                 {
                     return ATCMD_STATUS_INVALID_PARAMETER;
                 }
@@ -300,6 +315,7 @@ static ATCMD_STATUS _InternalCmdExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, co
     return ATCMD_STATUS_OK;
 }
 
+
 /*******************************************************************************
 * Command update functions
 *******************************************************************************/
@@ -322,3 +338,4 @@ static ATCMD_STATUS _InternalCmdUpdate(const AT_CMD_TYPE_DESC* pCmdTypeDesc, con
 
     return ATCMD_STATUS_OK;
 }
+

@@ -109,6 +109,7 @@ extern "C" {
 
 #define SYS_NET_TLS_ENABLED
 #define WOLFSSL_TLS13_NO_PEEK_HANDSHAKE_DONE
+#define SYS_NET_TLS_CERT_VERIFY_ENABLED
 
 
 
@@ -158,8 +159,9 @@ extern "C" {
 // *****************************************************************************
 /*** WiFi PIC32MZW1 Driver Configuration ***/
 #define WDRV_PIC32MZW1_DEVICE_USE_SYS_DEBUG
-#define WDRV_PIC32MZW_WPA3_SUPPORT
+#define WDRV_PIC32MZW_WPA3_PERSONAL_SUPPORT
 #define WDRV_PIC32MZW_BA414E_SUPPORT
+#define WDRV_PIC32MZW_BIGINTSW_SUPPORT
 #define WDRV_PIC32MZW_ALARM_PERIOD_1MS          390
 #define WDRV_PIC32MZW_ALARM_PERIOD_MAX          168
 
@@ -176,9 +178,9 @@ extern "C" {
 
 /*** ICMPv4 Client Configuration ***/
 #define TCPIP_STACK_USE_ICMP_CLIENT
-#define TCPIP_ICMP_CLIENT_USER_NOTIFICATION   true
 #define TCPIP_ICMP_ECHO_REQUEST_TIMEOUT        500
 #define TCPIP_ICMP_TASK_TICK_RATE              33
+#define TCPIP_STACK_MAX_CLIENT_ECHO_REQUESTS   4
 #define TCPIP_ICMP_COMMAND_ENABLE              false
 
 /******************************************************************************/
@@ -266,11 +268,11 @@ extern "C" {
 #define TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0			"0.0.0.0"
 #define TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0			"full"
 #define TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0			\
-													TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON |\
-													TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON |\
-													TCPIP_NETWORK_CONFIG_MULTICAST_ON |\
-													TCPIP_NETWORK_CONFIG_IP_STATIC
-													
+                                                    TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON |\
+                                                    TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON |\
+                                                    TCPIP_NETWORK_CONFIG_MULTICAST_ON |\
+                                                    TCPIP_NETWORK_CONFIG_IP_STATIC
+                                                    
 #define TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0			WDRV_PIC32MZW1_MACObject
 
 
@@ -367,6 +369,8 @@ extern "C" {
 #define TCPIP_DHCP_TIME_SERVER_ADDRESSES            0
 #define TCPIP_DHCP_USE_OPTION_NTP_SERVER            0
 #define TCPIP_DHCP_NTP_SERVER_ADDRESSES             0
+#define TCPIP_DHCP_ARP_LEASE_CHECK_TMO              1000
+#define TCPIP_DHCP_WAIT_ARP_FAIL_CHECK_TMO          10
 
 
 
@@ -381,17 +385,17 @@ extern "C" {
 #define TCPIP_DHCPS_LEASE_DURATION	TCPIP_DHCPS_LEASE_SOLVED_ENTRY_TMO
 
 /*** DHCP Server Instance 0 Configuration ***/
-#define TCPIP_DHCPS_DEFAULT_IP_ADDRESS_RANGE_START_IDX0             "192.168.0.100"
+#define TCPIP_DHCPS_DEFAULT_IP_ADDRESS_RANGE_START_IDX0             "192.168.1.100"
 
-#define TCPIP_DHCPS_DEFAULT_SERVER_IP_ADDRESS_IDX0                  "192.168.0.1"
+#define TCPIP_DHCPS_DEFAULT_SERVER_IP_ADDRESS_IDX0                  "192.168.1.1"
 
 #define TCPIP_DHCPS_DEFAULT_SERVER_NETMASK_ADDRESS_IDX0             "255.255.255.0"
 
-#define TCPIP_DHCPS_DEFAULT_SERVER_GATEWAY_ADDRESS_IDX0             "192.168.0.1"
+#define TCPIP_DHCPS_DEFAULT_SERVER_GATEWAY_ADDRESS_IDX0             "192.168.1.1"
 
-#define TCPIP_DHCPS_DEFAULT_SERVER_PRIMARY_DNS_ADDRESS_IDX0         "192.168.0.1"
+#define TCPIP_DHCPS_DEFAULT_SERVER_PRIMARY_DNS_ADDRESS_IDX0         "192.168.1.1"
 
-#define TCPIP_DHCPS_DEFAULT_SERVER_SECONDARY_DNS_ADDRESS_IDX0       "192.168.0.1"
+#define TCPIP_DHCPS_DEFAULT_SERVER_SECONDARY_DNS_ADDRESS_IDX0       "192.168.1.1"
 
 #define TCPIP_DHCP_SERVER_INTERFACE_INDEX_IDX0                      0
 
@@ -454,7 +458,7 @@ extern "C" {
 
 
 /* TCP/IP RTOS Configurations*/
-#define TCPIP_RTOS_STACK_SIZE                1024
+#define TCPIP_RTOS_STACK_SIZE                3072
 #define TCPIP_RTOS_PRIORITY             1
 
 
@@ -547,8 +551,14 @@ extern "C" {
 #define SYS_WIFI_COUNTRYCODE        	   "GEN"
 #define SYS_WIFI_STA_SSID        			"MCHP.IOT"
 #define SYS_WIFI_STA_PWD        			"microchip"
+
+
 #define SYS_WIFI_STA_AUTHTYPE				SYS_WIFI_WPAWPA2MIXED 
+
+
+
 #define SYS_WIFI_STA_AUTOCONNECT   			false
+
 
 
 
@@ -559,6 +569,9 @@ extern "C" {
 /* SYS WIFI RTOS Configurations*/
 #define SYS_WIFI_RTOS_SIZE           		1024
 #define SYS_WIFI_RTOS_PRIORITY             1
+
+#define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1
+
 
 
 

@@ -10,7 +10,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: stdio, value: uart2}
+        attributes: {id: stdio, value: uart1}
 - type: Attachments
   children:
   - type: DirectDependency
@@ -21,10 +21,10 @@ children:
       - type: String
         attributes: {id: targetComponentID}
         children:
-        - {type: Value, value: uart2}
+        - {type: Value, value: uart1}
       - type: String
         attributes: {id: targetAttachmentID}
         children:
-        - {type: Value, value: UART2_UART}
+        - {type: Value, value: UART1_UART}
 - type: ElementPosition
   attributes: {x: '190', y: '660', id: stdio}

@@ -274,6 +274,7 @@ static TCPIP_STACK_HEAP_RES _TCPIP_HEAP_Delete(TCPIP_STACK_HEAP_HANDLE heapH)
     return TCPIP_STACK_HEAP_RES_NO_HEAP; 
 }
 
+
 static void* _TCPIP_HEAP_Malloc(TCPIP_STACK_HEAP_HANDLE heapH, size_t nBytes)
 {
 	size_t      mapBytes;
@@ -294,7 +295,7 @@ static void* _TCPIP_HEAP_Malloc(TCPIP_STACK_HEAP_HANDLE heapH, size_t nBytes)
 
     if (hDcpt->heapDoProtect)
     {
-        OSAL_SEM_Pend(&hDcpt->_heapSemaphore, OSAL_WAIT_FOREVER);
+        (void)OSAL_SEM_Pend(&hDcpt->_heapSemaphore, OSAL_WAIT_FOREVER);
     }
 
 	while(true)
@@ -306,7 +307,6 @@ static void* _TCPIP_HEAP_Malloc(TCPIP_STACK_HEAP_HANDLE heapH, size_t nBytes)
             hDcpt->_lastHeapErr = TCPIP_STACK_HEAP_RES_NO_MEM;
             break;
         }
-        
 
         if(hDcpt->heapDoAlign)
         {   
@@ -347,7 +347,7 @@ static void* _TCPIP_HEAP_Malloc(TCPIP_STACK_HEAP_HANDLE heapH, size_t nBytes)
 
     if (hDcpt->heapDoProtect)
     {
-        OSAL_SEM_Post(&hDcpt->_heapSemaphore);
+        (void)OSAL_SEM_Post(&hDcpt->_heapSemaphore);
     }
 
     return alignPtr;
@@ -376,7 +376,7 @@ static size_t _TCPIP_HEAP_Free(TCPIP_STACK_HEAP_HANDLE heapH, const void* ptr)
     {
         if (hDcpt->heapDoProtect)
         {
-            OSAL_SEM_Pend(&hDcpt->_heapSemaphore, OSAL_WAIT_FOREVER);
+            (void)OSAL_SEM_Pend(&hDcpt->_heapSemaphore, OSAL_WAIT_FOREVER);
         }
 
         if(hDcpt->heapDoMap)
@@ -396,7 +396,7 @@ static size_t _TCPIP_HEAP_Free(TCPIP_STACK_HEAP_HANDLE heapH, const void* ptr)
 
         if (hDcpt->heapDoProtect)
         {
-            OSAL_SEM_Post(&hDcpt->_heapSemaphore);
+            (void)OSAL_SEM_Post(&hDcpt->_heapSemaphore);
         }
     }
 

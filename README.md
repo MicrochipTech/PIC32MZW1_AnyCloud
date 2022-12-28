@@ -78,7 +78,7 @@ In case you want to re-flash the device, perform the following steps:
 
 Perform the following steps:
 
-1.  Connect the PIC32MZ-W1 Curiosity/ WFI32E IOT board to your PC
+1.  Connect the PIC32MZ-W1 Curiosity/ WFI32E IOT board to your PC/ Host MCU.
 
 2.  Open the Terminal application \(Ex.:Tera term\) on the computer.
 
@@ -94,7 +94,7 @@ Perform the following steps:
 
     -   Flow Control : None
 
-    **Note**: The UART used in this case is UART1.
+    **Note**: The UART used in this case is UART2.
 
 4. All the configurations on the device will be done using AT Cmds via the UART. The details regarding the supported AT CMDs can be found in the document [ATCommandReference.pdf](https://github.com/MicrochipTech/PIC32MZW1_AnyCloud/blob/main/doc/ATCommandReference.pdf) in the "doc" folder
 
@@ -140,6 +140,15 @@ Perform the following steps:
 ## Secure Provisioning & Transport Layer Security
 
 The PIC32MZ-W1 Curiosity Boards kits are shipped with the WFI32 module variants that include an on-board [Trust\&Go](https://www.microchip.com/design-centers/security-ics/trust-platform/trust-go) secure element. Since [Trust\&Go](https://www.microchip.com/design-centers/security-ics/trust-platform/trust-go) devices are pre-provisioned, the customer does not need to programe the device certificate for each of his devices and the firmware can utilise the on-chip certificate to securely authenticate with AWS IoT Core/ Azure IoT Hub.
+
+
+## Known Issues and Limitations
+
+1. Only 'Extended Deep Sleep' mode is supported currently in Low Power feature. 'Connected sleep' mode will be supported in future release.
+
+2. Connectivity to Azure IoT Hub is currently not possible with domain name containing 'gateway' in it. The user would need to do a 'nslookup <azure server>' and check if the domain name contains 'gateway'. In case it does, the connectivity to the Azure server will not be possible.
+
+3. Current drawn in 'Extended Deep Sleep' mode in Low Power is more than expected.
 
 
 

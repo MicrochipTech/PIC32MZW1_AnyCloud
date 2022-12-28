@@ -120,7 +120,7 @@ static void _PINGResolvEventHandler(TCPIP_NET_HANDLE hNet, TCPIP_DNS_EVENT_TYPE 
     }
 }
 
-static void _PingCallback(const TCPIP_ICMP_ECHO_REQUEST* pReqData, TCPIP_ICMP_REQUEST_HANDLE icmpHandle, TCPIP_ICMP_ECHO_REQUEST_RESULT result)
+static void _PingCallback(const TCPIP_ICMP_ECHO_REQUEST* pReqData, TCPIP_ICMP_REQUEST_HANDLE icmpHandle, TCPIP_ICMP_ECHO_REQUEST_RESULT result, const void* param)
 {
     char s[20];
 

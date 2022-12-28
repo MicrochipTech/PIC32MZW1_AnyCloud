@@ -10,7 +10,7 @@
 *******************************************************************************/
 
 /*****************************************************************************
- Copyright (C) 2013-2022 Microchip Technology Inc. and its subsidiaries.
+ Copyright (C) 2013-2018 Microchip Technology Inc. and its subsidiaries.
 
 Microchip Technology Inc. and its subsidiaries.
 
@@ -43,14 +43,20 @@ THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 #include "wolfssl/ssl.h"
 #include "wolfssl/wolfcrypt/logging.h"
 #include "wolfssl/wolfcrypt/random.h"
+
 #include "cert_header.h"
-#include "system/console/sys_console.h"
+#include "cert_header.h"
+#include "cert_header.h"
+
 
 extern  int CheckAvailableSize(WOLFSSL *ssl, int size);
 #include "wolfssl/wolfcrypt/port/atmel/atmel.h"
 
-unsigned char *g_NewCertFile;
+#define NET_PRES_MAX_CERT_LEN	4096
+unsigned char g_NewCertFile[NET_PRES_MAX_CERT_LEN];
 long g_NewCertSz = 0;
+int g_NewCertFormat;
+
 
 typedef struct 
 {
@@ -132,84 +138,73 @@ bool NET_PRES_EncProviderStreamClientInit0(NET_PRES_TransportObject * transObjec
     {
         return false;
     }
+	wolfSSL_CTX_set_verify(net_pres_wolfSSLInfoStreamClient0.context, WOLFSSL_VERIFY_PEER, 0);
+	
     wolfSSL_SetIORecv(net_pres_wolfSSLInfoStreamClient0.context, (CallbackIORecv)&NET_PRES_EncGlue_StreamClientReceiveCb0);
     wolfSSL_SetIOSend(net_pres_wolfSSLInfoStreamClient0.context, (CallbackIOSend)&NET_PRES_EncGlue_StreamClientSendCb0);
-#ifndef RN_MODE_DISABLED
-#if 1 // Azure
-		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, app_client_cert_der_2048_azure, sizeof_app_client_cert_der_2048_azure, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-		{
-			// Couldn't load the CA certificates
-			SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
-			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
-			return false;
-		}
-#endif
-#if 1 // AWS
-		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, app_client_cert_der_starfield_base, sizeof_app_client_cert_der_starfield_base, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-		{
-			// Couldn't load the CA certificates
-			SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
-			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
-			return false;
-		}
 		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, caCertsPtr, caCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
 		{
 			// Couldn't load the CA certificates
-			SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
+        //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
 			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
 			return false;
 		}
-#endif	
-#if 1 // MOSQUITTO_ORG
-		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, app_client_cert_der_mosquitto_org, sizeof_app_client_cert_der_mosquitto_org, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
+	{	
+    const uint8_t *tmpCaCertsPtr = app_client_cert_der_2048_azure;
+    int32_t tmpCaCertsLen = sizeof_app_client_cert_der_2048_azure;
+
+    if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, tmpCaCertsPtr, tmpCaCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
 		{
 			// Couldn't load the CA certificates
-			SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
+        //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
 			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
 			return false;
 		}
-#endif
-#if 1// Local Mosquitto Server
-		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, app_client_cert_der_2048_local_mosquitto_server, sizeof_app_client_cert_der_2048_local_mosquitto_server, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-		{
-			// Couldn't load the CA certificates
-			SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
-			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
-			return false;
-		}
-#endif
-#if 1 //Certificate from Host
-    if(g_NewCertSz)
+	}
+
+	{
+		const uint8_t *tmpCaCertsPtr = app_client_cert_der_mosquitto_org;
+		int32_t tmpCaCertsLen = sizeof_app_client_cert_der_mosquitto_org;
+
+    if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, tmpCaCertsPtr, tmpCaCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
     {
-        if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, g_NewCertFile, g_NewCertSz, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-        {
                 // Couldn't load the CA certificates
-                SYS_CONSOLE_PRINT("Something went wrong loading the CA certificates\r\n");
+        //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
                 wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
                 return false;
         }
-        g_NewCertSz = 0;
+	}
+
+	{
+		const uint8_t *tmpCaCertsPtr = app_client_cert_der_starfield_base;
+		int32_t tmpCaCertsLen = sizeof_app_client_cert_der_starfield_base;
+
+        if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, tmpCaCertsPtr, tmpCaCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
+        {
+            // Couldn't load the CA certificates
+            //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
+            wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
+            return false;
+        }
     }
-#endif
-#else
-	if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, caCertsPtr, caCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-    {
-        // Couldn't load the CA certificates
-        //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
-        wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
-        return false;
-    }
-#endif	
-    // Turn off verification, because SNTP is usually blocked by a firewall
-    wolfSSL_CTX_set_verify(net_pres_wolfSSLInfoStreamClient0.context, SSL_VERIFY_PEER, 0);
-//    wolfSSL_CTX_set_verify(net_pres_wolfSSLInfoStreamClient0.context, SSL_VERIFY_NONE, 0);
+
+		if(g_NewCertSz)
+		{
+			if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, g_NewCertFile, g_NewCertSz, g_NewCertFormat) != SSL_SUCCESS)
+			{
+				// Couldn't load the CA certificates
+				//SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
+				wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
+				return false;
+			}
+			g_NewCertSz = 0;
+		}
     /*initialize Trust*Go and load device certificate into the context*/
     atcatls_set_callbacks(net_pres_wolfSSLInfoStreamClient0.context);
     /*Use TLS extension since we support only P256R1 with ECC608 Trust&Go*/
     if (WOLFSSL_SUCCESS != wolfSSL_CTX_UseSupportedCurve(net_pres_wolfSSLInfoStreamClient0.context, WOLFSSL_ECC_SECP256R1)) {
         return false;
     }
-    
     net_pres_wolfSSLInfoStreamClient0.isInited = true;
     return true;
 }
@@ -248,7 +243,7 @@ bool NET_PRES_EncProviderStreamClientOpen0(uintptr_t transHandle, void * provide
 	        {
     	        return false;
         	}
-		}
+                }
         if (wolfSSL_UseALPN(ssl, NET_PRES_ALPN_PROTOCOL_NAME_LIST, sizeof(NET_PRES_ALPN_PROTOCOL_NAME_LIST),WOLFSSL_ALPN_FAILED_ON_MISMATCH) != WOLFSSL_SUCCESS)
         {
             return false;
@@ -393,17 +388,22 @@ int32_t NET_PRES_EncProviderMaxOutputSize0(void * providerData)
     return ret;
 }
 
-bool NET_PRES_LoadVerifyDerBuffer(unsigned char* in, long sz)
+bool NET_PRES_SetCertificate(unsigned char* in, long sz, int format)
 {
     int ret = 0;
+	
     if(net_pres_wolfSSLInfoStreamClient0.context == NULL)
     {
-        g_NewCertFile = in;
+	if(sz > NET_PRES_MAX_CERT_LEN)
+		return false;
+		
+        memcpy(g_NewCertFile, in, sz);
         g_NewCertSz = sz;
+		g_NewCertFormat = format;
         return true;
     }
     
-    ret = wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, in, sz, SSL_FILETYPE_ASN1);
+    ret = wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, in, sz, format);
     if (ret != SSL_SUCCESS)
     {
         // Couldn't load the CA certificates

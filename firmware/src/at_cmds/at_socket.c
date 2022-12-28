@@ -664,6 +664,7 @@ static void _closeSocket(ATCMD_SOCK_STATE *pSockState)
 
         pSockState->remoteIPv4Addr.Val = 0;
         pSockState->remotePort         = 0;
+        pSockState->pendingDataLength  = 0;
     }
     else
     {
@@ -754,6 +755,11 @@ static void _tcpSocketSignalHandler(TCP_SOCKET hTCP, TCPIP_NET_HANDLE hNet, TCPI
 
 //    ATCMD_Printf("TSH(%d): (0x%08x) 0x%04x\r\n", hTCP, param, sigType);
 
+    if (true == ATCMD_ModeIsBinary())
+    {
+        return;        
+    }
+    
     if (NULL == pSockState)
     {
         return;
@@ -783,7 +789,11 @@ static void _tcpSocketSignalHandler(TCP_SOCKET hTCP, TCPIP_NET_HANDLE hNet, TCPI
             }
         }
 
-        TCPIP_TCP_SocketInfoGet(pSockState->transHandle, &tcpSockInfo);
+        memset(&tcpSockInfo, 0, sizeof(tcpSockInfo));
+        if(false == TCPIP_TCP_SocketInfoGet(pSockState->transHandle, &tcpSockInfo))
+        {
+            ATCMD_Printf("TCPIP_TCP_SocketInfoGet() returned false; pSockState->transHandle = 0x%x ; hTCP = 0x%x", pSockState->transHandle, hTCP);            
+        }
 
         if (NULL != pSockState->pParent)
         {
@@ -826,15 +836,19 @@ static void _tcpSocketSignalHandler(TCP_SOCKET hTCP, TCPIP_NET_HANDLE hNet, TCPI
     {
         ATCMD_Printf("+SOCKCL:%d\r\n", pSockState->handle);
 
+        if (true == TCPIP_TCP_Disconnect(pSockState->transHandle))
+        {
+            if (NULL != pSockState->pWolfSSLSession)
+            {
+                ATCMD_TLS_FreeSession(pSockState->tlsConfIdx, pSockState->pWolfSSLSession);
+            }
+
+            pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
+        }
+
         pSockState->remoteIPv4Addr.Val = 0;
         pSockState->remotePort         = 0;
-
-        if(sigType & TCPIP_TCP_SIGNAL_RX_RST)
-        {
-            pSockState->encryptState = ATCMD_SOCK_ENCRYPT_STATE_NONE;
-            pSockState->transHandle    = -1;
-            pSockState->inUse          = false;
-        }
+        pSockState->pendingDataLength  = 0;
     }
 }
 
@@ -1277,6 +1291,11 @@ static ATCMD_STATUS _SOCKWRExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
         return ATCMD_APP_STATUS_SOCKET_ID_NOT_FOUND;
     }
 
+    if ((0 == pSockState->remoteIPv4Addr.Val) || (0 == pSockState->remotePort))
+    {
+        return ATCMD_APP_STATUS_SOCKET_ID_NOT_FOUND;        
+    }
+    
     if (2 == numParams)
     {
         /* Binary mode */
@@ -1284,13 +1303,6 @@ static ATCMD_STATUS _SOCKWRExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
         ATCMD_Print("\r\n", 2);
         ATCMD_EnterBinaryMode(&_socketWriteBinaryDataHandler);
         pSOCKWRBinarySock = pSockState;
-        if ((0 == pSockState->remoteIPv4Addr.Val) || (0 == pSockState->remotePort))
-        {
-            IPV4_ADDR remoteAddr;
-            TCPIP_Helper_StringToIPAddress((char*)pParamList[1].value.p, &remoteAddr);
-            pSockState->remoteIPv4Addr.Val = remoteAddr.Val;
-            pSockState->remotePort         = pParamList[2].value.i;
-        }
     }
     else if (pParamList[1].value.i == pParamList[2].length)
     {
@@ -1584,6 +1596,7 @@ static ATCMD_STATUS _SOCKCLExecute(const AT_CMD_TYPE_DESC* pCmdTypeDesc, const i
             pTmpSockState->inUse          = false;
             pTmpSockState->remoteIPv4Addr.Val = 0;
             pTmpSockState->remotePort         = 0;
+            pTmpSockState->pendingDataLength  = 0;
         }
     }
     
