@@ -30,7 +30,7 @@
 
 /* Maximum length of a single AT command */
 #ifndef AT_CMD_CONF_MAX_COMMAND_LENGTH
-#define AT_CMD_CONF_MAX_COMMAND_LENGTH          256
+#define AT_CMD_CONF_MAX_COMMAND_LENGTH          512
 #endif
 
 /* Maximum length of a formatting print string */
