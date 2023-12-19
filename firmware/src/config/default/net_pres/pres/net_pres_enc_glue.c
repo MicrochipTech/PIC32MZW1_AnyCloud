@@ -121,12 +121,6 @@ static uint8_t _net_pres_wolfsslUsers = 0;
 		
 bool NET_PRES_EncProviderStreamClientInit0(NET_PRES_TransportObject * transObject)
 {
-    const uint8_t * caCertsPtr;
-    int32_t caCertsLen;
-    if (!NET_PRES_CertStoreGetCACerts(&caCertsPtr, &caCertsLen, 0))
-    {
-        return false;
-    }
     if (_net_pres_wolfsslUsers == 0)
     {
         wolfSSL_Init();
@@ -142,13 +136,6 @@ bool NET_PRES_EncProviderStreamClientInit0(NET_PRES_TransportObject * transObjec
 	
     wolfSSL_SetIORecv(net_pres_wolfSSLInfoStreamClient0.context, (CallbackIORecv)&NET_PRES_EncGlue_StreamClientReceiveCb0);
     wolfSSL_SetIOSend(net_pres_wolfSSLInfoStreamClient0.context, (CallbackIOSend)&NET_PRES_EncGlue_StreamClientSendCb0);
-		if (wolfSSL_CTX_load_verify_buffer(net_pres_wolfSSLInfoStreamClient0.context, caCertsPtr, caCertsLen, SSL_FILETYPE_ASN1) != SSL_SUCCESS)
-		{
-			// Couldn't load the CA certificates
-        //SYS_CONSOLE_MESSAGE("Something went wrong loading the CA certificates\r\n");
-			wolfSSL_CTX_free(net_pres_wolfSSLInfoStreamClient0.context);
-			return false;
-		}
 	{	
     const uint8_t *tmpCaCertsPtr = app_client_cert_der_2048_azure;
     int32_t tmpCaCertsLen = sizeof_app_client_cert_der_2048_azure;

@@ -37,7 +37,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define AT_CMD_CONF_MODEL_ID                    "\"PIC32MZW1\""
 
 /* The Manufacturers ID to be returned from +GMR */
-#define AT_CMD_CONF_REVISION_ID                 "\"0.3.1\"" // ATCMD_APPExecuteGMR()
+#define AT_CMD_CONF_REVISION_ID                 "\"0.3.2\"" // ATCMD_APPExecuteGMR()
 
 /* Maximum length of a single AT command */
 //#define AT_CMD_CONF_MAX_COMMAND_LENGTH          1024
